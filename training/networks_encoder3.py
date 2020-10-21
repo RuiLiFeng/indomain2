@@ -339,8 +339,8 @@ def Encoder(
 
     with tf.variable_scope('Latent_out'):
         hidden = apply_bias(dense(net, fmaps=2 * dlatent_size * num_layers, use_wscale=False))
-        alpha = tf.get_variable('alpha', shape=[1 * num_layers], dtype=tf.float32,
-                                initializer=tf.constant(0.08), trainable=True)
+        alpha = tf.get_variable('alpha', dtype=tf.float32,
+                                initializer=tf.ones([1 * num_layers]), trainable=True)
         with tf.variable_scope('Latent_radius'):
             latent_radius = apply_bias(dense(hidden[:, :dlatent_size * num_layers], fmaps=1 * num_layers, use_wscale=True))
             latent_radius = tf.square(latent_radius) * alpha
