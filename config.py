@@ -10,7 +10,7 @@
 #----------------------------------------------------------------------------
 # Paths.
 
-result_dir = 'results'
+result_dir = '/gdata2/fengrl/indomain2'
 data_dir = 'datasets'
 cache_dir = 'cache'
 run_dir_ignore = ['results', 'datasets', 'cache']

@@ -18,6 +18,8 @@ def main():
                         help='the image size in training dataset (defaults; 256)')
     parser.add_argument('--dataset_name', type=str, default='ffhq',
                         help='the name of the training dataset (defaults; ffhq)')
+    parser.add_argument('--result_dir', type=str, default='ffhq',
+                        help='the name of the training dataset (defaults; ffhq)')
     parser.add_argument('--mirror_augment', action='store_false',
                         help='Mirror augment (default: True)')
     args = parser.parse_args()
@@ -58,7 +60,7 @@ def main():
     kwargs.submit_config.image_size = args.image_size
     kwargs.submit_config.batch_size = batch_size
     kwargs.submit_config.batch_size_test = batch_size_test
-    kwargs.submit_config.run_dir_root = dnnlib.submission.submit.get_template_from_path(config.result_dir)
+    kwargs.submit_config.run_dir_root = dnnlib.submission.submit.get_template_from_path(args.result_dir)
     kwargs.submit_config.run_dir_ignore += config.run_dir_ignore
     kwargs.submit_config.run_desc = desc
 
