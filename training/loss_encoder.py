@@ -114,7 +114,7 @@ def E_loss_nei(E, G, D, perceptual_model, reals, feature_scale=0.00005, D_scale=
     return loss, recon_loss, adv_loss
 
 
-def D_logistic_simplegp_2(E, G, D, reals, r1_gamma=10.0):
+def D_logistic_simplegp_3(E, G, D, reals, r1_gamma=10.0):
 
     num_layers, latent_dim = G.components.synthesis.input_shape[1:3]
     latent_w, latent_radius = E.get_output_for(reals, is_training=True)

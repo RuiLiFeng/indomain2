@@ -15,12 +15,6 @@ from utils.visualizer import fuse_images
 from utils.visualizer import save_image
 from utils.visualizer import adjust_pixel_range
 
-import pickle
-import PIL.Image
-import PIL.ImageFont
-import dnnlib
-
-
 
 def process_reals(x, mirror_augment, drange_data, drange_net):
     with tf.name_scope('ProcessReals'):
@@ -72,10 +66,7 @@ def test(E, Gs, real_test, submit_config):
         with tf.device("/cpu:0"):
             in_split = tf.split(real_test, submit_config.num_gpus)
         out_split = []
-        inter_split = []
-        cir_split = []
         num_layers, latent_dim = Gs.components.synthesis.input_shape[1:3]
-
         for gpu in range(submit_config.num_gpus):
             with tf.device("/gpu:%d" % gpu):
                 in_gpu = in_split[gpu]
@@ -83,43 +74,11 @@ def test(E, Gs, real_test, submit_config):
                 latent_wp = tf.reshape(latent_w, [in_gpu.shape[0], num_layers, latent_dim])
                 fake_X_val = Gs.components.synthesis.get_output_for(latent_wp, randomize_noise=False)
                 out_split.append(fake_X_val)
-                latent_wp_inter = tf.reshape(inter(latent_wp), [-1, latent_dim])
-                fake_X_inter = Gs.components.synthesis.get_output_for(latent_wp_inter, randomize_noise=False)
-                fake_X_inter = tf.reshape(fake_X_inter, [1, -1] + real_test.shape[1:])
-                fake_X_inter = tf.concat([in_gpu[0, np.newaxis, np.newaxis],
-                                          fake_X_inter, in_gpu[1, np.newaxis, np.newaxis]], axis=1)
-                fake_X_inter = tf.reshape([-1] + real_test.shape[1:])
-                inter_split.append(fake_X_inter)
 
         with tf.device("/cpu:0"):
             out_expr = tf.concat(out_split, axis=0)
-            inter_expr = tf.concat(inter_split, axis=0)
 
-    return out_expr, inter_expr
-
-
-def inter(latent_wp, step=10):
-    assert latent_wp.shape[0].value >= 2
-    num = 1
-    code_shape = latent_wp.shape[1:]
-    a = latent_wp[0, np.newaxis, np.newaxis]
-    b = latent_wp[1, np.newaxis, np.newaxis]
-    l = np.linspace(0.0, 1.0, step).reshape(
-        [step if axis == 1 else 1 for axis in range(a.get_shape().ndim)])
-    results = a + l * (b - a)
-    assert results.shape == (num, step, *code_shape)
-    return results
-
-
-def circ(latent_wp, step=9):
-    code_shape = latent_wp.shape[1:]
-    n = tf.get_variable('n', shape=code_shape, dtype=tf.float32,
-                        initializer=tf.random_normal_initializer(stddev=1.0), trainable=False)
-    v = tf.get_variable('v', shape=code_shape, dtype=tf.float32,
-                        initializer=tf.random_normal_initializer(stddev=1.0), trainable=False)
-    n = n / tf.reduce_sum(tf.square(n))
-    v = v / tf.reduce_sum(tf.square(v))
-    a = tf.tile(latent_wp[0, np.newaxis, np.newaxis], [9, 9] + [1 for axis in range(code_shape.ndim)])
+    return out_expr
 
 
 
@@ -213,7 +172,7 @@ def training_loop(
     D_train_op = D_opt.apply_updates()
 
     print('Building testing graph...')
-    fake_X_val, fake_X_inter = test(E, Gs, real_test, submit_config)
+    fake_X_val = test(E, Gs, real_test, submit_config)
 
     sess = tf.get_default_session()
 
@@ -251,17 +210,12 @@ def training_loop(
             if cur_tick % image_snapshot_ticks == 0:
                 batch_images_test = sess.run(image_batch_test)
                 batch_images_test = misc.adjust_dynamic_range(batch_images_test.astype(np.float32), [0, 255], [-1., 1.])
-                recon, inter_X = sess.run([fake_X_val, fake_X_inter], feed_dict={real_test: batch_images_test})
+                recon = sess.run(fake_X_val, feed_dict={real_test: batch_images_test})
                 orin_recon = np.concatenate([batch_images_test, recon], axis=0)
                 orin_recon = adjust_pixel_range(orin_recon)
-                inter_X = adjust_pixel_range(inter_X)
                 orin_recon = fuse_images(orin_recon, row=2, col=submit_config.batch_size_test)
-                inter_X = fuse_images(inter_X, col=12)
                 # save image results during training, first row is original images and the second row is reconstructed images
-                # convert_to_pil_image(orin_recon).save('%s/iter_%08d.png' % (submit_config.run_dir, cur_nimg))
-                # convert_to_pil_image(inter_X).save('%s/iter_%08d_inter.png' % (submit_config.run_dir, cur_nimg))
                 save_image('%s/iter_%08d.png' % (submit_config.run_dir, cur_nimg), orin_recon)
-                save_image('%s/iter_%08d_inter.png' % (submit_config.run_dir, cur_nimg), inter_X)
 
             if cur_tick % network_snapshot_ticks == 0:
                 pkl = os.path.join(submit_config.run_dir, 'network-snapshot-%08d.pkl' % (cur_nimg))
@@ -269,37 +223,3 @@ def training_loop(
 
     misc.save_pkl((E, G, D, Gs), os.path.join(submit_config.run_dir, 'network-final.pkl'))
     summary_log.close()
-
-
-def create_image_grid(images, grid_size=None):
-    assert images.ndim == 3 or images.ndim == 4
-    num, img_w, img_h = images.shape[0], images.shape[-1], images.shape[-2]
-
-    if grid_size is not None:
-        grid_w, grid_h = tuple(grid_size)
-    else:
-        grid_w = max(int(np.ceil(np.sqrt(num))), 1)
-        grid_h = max((num - 1) // grid_w + 1, 1)
-
-    grid = np.zeros(list(images.shape[1:-2]) + [grid_h * img_h, grid_w * img_w], dtype=images.dtype)
-    for idx in range(num):
-        x = (idx % grid_w) * img_w
-        y = (idx // grid_w) * img_h
-        grid[..., y : y + img_h, x : x + img_w] = images[idx]
-    return grid
-
-def convert_to_pil_image(image, drange=[0,1]):
-    assert image.ndim == 2 or image.ndim == 3
-    if image.ndim == 3:
-        if image.shape[0] == 1:
-            image = image[0] # grayscale CHW => HW
-        else:
-            image = image.transpose(1, 2, 0) # CHW -> HWC
-
-    # image = adjust_dynamic_range(image, drange, [0,255])
-    image = np.rint(image).clip(0, 255).astype(np.uint8)
-    fmt = 'RGB' if image.ndim == 3 else 'L'
-    return PIL.Image.fromarray(image, fmt)
-
-def save_image_grid(images, filename, drange=[0,1], grid_size=None):
-    convert_to_pil_image(create_image_grid(images, grid_size), drange).save(filename)
