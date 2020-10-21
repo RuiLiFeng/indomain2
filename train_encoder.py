@@ -24,12 +24,13 @@ def main():
                         help='Mirror augment (default: True)')
     args = parser.parse_args()
 
-    train           = EasyDict(run_func_name='training.training_loop_encoder.training_loop')
-    Encoder         = EasyDict(func_name='training.networks_encoder.Encoder')
+    train           = EasyDict(run_func_name='training.training_loop_encoder3.training_loop')
+    Encoder         = EasyDict(func_name='training.networks_encoder3.Encoder')
     E_opt           = EasyDict(beta1=0.9, beta2=0.99, epsilon=1e-8)
     D_opt           = EasyDict(beta1=0.9, beta2=0.99, epsilon=1e-8)
-    E_loss          = EasyDict(func_name='training.loss_encoder.E_loss', feature_scale=0.00005, D_scale=0.08, perceptual_img_size=256)
-    D_loss          = EasyDict(func_name='training.loss_encoder.D_logistic_simplegp', r1_gamma=10.0)
+    E_loss          = EasyDict(func_name='training.loss_encoder.E_loss_nei',
+                               feature_scale=0.00005, D_scale=0.08, perceptual_img_size=256)
+    D_loss          = EasyDict(func_name='training.loss_encoder.D_logistic_simplegp_3', r1_gamma=10.0)
     lr              = EasyDict(learning_rate=0.0001, decay_step=30000, decay_rate=0.8, stair=False)
     Data_dir        = EasyDict(data_train=args.training_data, data_test=args.test_data)
     Decoder_pkl     = EasyDict(decoder_pkl=args.decoder_pkl)
@@ -52,7 +53,8 @@ def main():
     train.max_iters = int(total_kimgs.get(args.image_size) * 1000 / batch_size)
 
     kwargs = EasyDict(train)
-    kwargs.update(Encoder_args=Encoder, E_opt_args=E_opt, D_opt_args=D_opt, E_loss_args=E_loss, D_loss_args=D_loss, lr_args=lr)
+    kwargs.update(Encoder_args=Encoder, E_opt_args=E_opt,
+                  D_opt_args=D_opt, E_loss_args=E_loss, D_loss_args=D_loss, lr_args=lr)
     kwargs.update(dataset_args=Data_dir, decoder_pkl=Decoder_pkl, tf_config=tf_config)
     kwargs.lr_args.decay_step = train.max_iters // 4
     kwargs.submit_config = copy.deepcopy(submit_config)
