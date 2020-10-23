@@ -6,6 +6,7 @@ Flatten = tf.keras.layers.Flatten
 Concatenate = tf.keras.layers.Concatenate
 VGG16 = tf.keras.applications.vgg16.VGG16
 preprocess_input = tf.keras.applications.vgg16.preprocess_input
+import os
 # from keras.models import Model
 # from keras.layers import Flatten, Concatenate
 # from keras.applications.vgg16 import VGG16, preprocess_input
@@ -22,8 +23,12 @@ class PerceptualModel(Model):
       multi_layers: Whether to use the multiple layers output of VGG16 or not.
     """
     super().__init__()
+    if os.path.exists('/gdata2/fengrl/metrics/vgg.h5'):
+      weights = '/gdata2/fengrl/metrics/vgg.h5'
+    else:
+      weights = 'imagenet'
 
-    vgg = VGG16(include_top=False, input_shape=(img_size[0], img_size[1], 3))
+    vgg = VGG16(include_top=False, input_shape=(img_size[0], img_size[1], 3), weights=weights)
     if multi_layers:
       layer_ids = [2, 5, 9, 13, 17]
       layer_outputs = [
