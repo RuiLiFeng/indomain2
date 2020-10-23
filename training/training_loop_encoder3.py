@@ -187,8 +187,9 @@ def training_loop(
     tick_start_nimg = cur_nimg
     start_time = time.time()
 
+    sess.run(global_step0.initializer)
+
     print('Optimization starts!!!')
-    sess.run(tf.global_variables_initializer())
     for it in range(start, max_iters):
 
         batch_images = sess.run(image_batch_train)
