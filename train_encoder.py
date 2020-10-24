@@ -16,7 +16,13 @@ def main():
                         help='Number of GPUs to use during training (defaults: 8)')
     parser.add_argument('--image_size', type=int, default=256,
                         help='the image size in training dataset (defaults; 256)')
+    parser.add_argument('--resume_run_id', default=None,
+                        help='the image size in training dataset (defaults; 256)')
+    parser.add_argument('--resume_snapshot', default=None,
+                        help='the image size in training dataset (defaults; 256)')
     parser.add_argument('--dataset_name', type=str, default='ffhq',
+                        help='the name of the training dataset (defaults; ffhq)')
+    parser.add_argument('--desc', type=str, default=None,
                         help='the name of the training dataset (defaults; ffhq)')
     parser.add_argument('--result_dir', type=str, default='ffhq',
                         help='the name of the training dataset (defaults; ffhq)')
@@ -37,7 +43,10 @@ def main():
     tf_config       = {'rnd.np_random_seed': 1000}
     submit_config   = dnnlib.SubmitConfig()
 
-    desc = 'stylegan-encoder'
+    if args.desc is None:
+        desc = 'stylegan-encoder'
+    else:
+        desc = args.desc
     desc += '-%dgpu' % (args.num_gpus)
     desc += '-%dx%d' % (args.image_size, args.image_size)
     desc += '-%s' % (args.dataset_name)
@@ -55,7 +64,8 @@ def main():
     kwargs = EasyDict(train)
     kwargs.update(Encoder_args=Encoder, E_opt_args=E_opt,
                   D_opt_args=D_opt, E_loss_args=E_loss, D_loss_args=D_loss, lr_args=lr)
-    kwargs.update(dataset_args=Data_dir, decoder_pkl=Decoder_pkl, tf_config=tf_config)
+    kwargs.update(dataset_args=Data_dir, decoder_pkl=Decoder_pkl, tf_config=tf_config, resume_run_id=args.resume_run_id,
+                  resume_snapshot=args.resume_snapshot)
     kwargs.lr_args.decay_step = train.max_iters // 4
     kwargs.submit_config = copy.deepcopy(submit_config)
     kwargs.submit_config.num_gpus = args.num_gpus
