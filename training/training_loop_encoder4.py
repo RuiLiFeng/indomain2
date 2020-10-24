@@ -121,6 +121,7 @@ def training_loop(
                               num_layers=num_layers, is_training=True, num_gpus=submit_config.num_gpus, **Encoder_args)
             E.copy_vars_from(E_)
             start = int(network_pkl.split('-')[-1].split('.')[0]) // submit_config.batch_size
+            max_iters += start
             print('Start: ', start)
         else:
             print('Constructing networks...')
