@@ -32,8 +32,8 @@ def main():
                         help='Mirror augment (default: True)')
     args = parser.parse_args()
 
-    train           = EasyDict(run_func_name='training.training_loop_encoder' + args.id + '.training_loop')
-    Encoder         = EasyDict(func_name='training.networks_encoder' + args.id + '.Encoder')
+    train           = EasyDict(run_func_name='training.training_loop_encoder' + str(args.id) + '.training_loop')
+    Encoder         = EasyDict(func_name='training.networks_encoder' + str(args.id) + '.Encoder')
     E_opt           = EasyDict(beta1=0.9, beta2=0.99, epsilon=1e-8)
     D_opt           = EasyDict(beta1=0.9, beta2=0.99, epsilon=1e-8)
     E_loss          = EasyDict(func_name='training.loss_encoder.E_loss_nei',
