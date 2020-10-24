@@ -16,6 +16,8 @@ def main():
                         help='Number of GPUs to use during training (defaults: 8)')
     parser.add_argument('--image_size', type=int, default=256,
                         help='the image size in training dataset (defaults; 256)')
+    parser.add_argument('--id', type=int, default=3,
+                        help='the image size in training dataset (defaults; 256)')
     parser.add_argument('--resume_run_id', default=None,
                         help='the image size in training dataset (defaults; 256)')
     parser.add_argument('--resume_snapshot', default=None,
@@ -30,8 +32,8 @@ def main():
                         help='Mirror augment (default: True)')
     args = parser.parse_args()
 
-    train           = EasyDict(run_func_name='training.training_loop_encoder3.training_loop')
-    Encoder         = EasyDict(func_name='training.networks_encoder3.Encoder')
+    train           = EasyDict(run_func_name='training.training_loop_encoder' + args.id + '.training_loop')
+    Encoder         = EasyDict(func_name='training.networks_encoder' + args.id + '.Encoder')
     E_opt           = EasyDict(beta1=0.9, beta2=0.99, epsilon=1e-8)
     D_opt           = EasyDict(beta1=0.9, beta2=0.99, epsilon=1e-8)
     E_loss          = EasyDict(func_name='training.loss_encoder.E_loss_nei',
