@@ -11,7 +11,8 @@ target directory.
 import os
 import argparse
 import pickle
-from tqdm import tqdm
+# from tqdm import tqdm
+from training.misc import progress as tqdm
 import numpy as np
 import tensorflow as tf
 from dnnlib import tflib

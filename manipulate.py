@@ -9,7 +9,8 @@ import os.path
 import argparse
 import pickle
 import numpy as np
-from tqdm import tqdm
+# from tqdm import tqdm
+from training.misc import progress as tqdm
 import tensorflow as tf
 from dnnlib import tflib
 
