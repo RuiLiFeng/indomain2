@@ -21,6 +21,8 @@ from utils.logger import setup_logger
 from utils.visualizer import adjust_pixel_range
 from utils.visualizer import HtmlPageVisualizer
 from utils.visualizer import save_image, load_image, resize_image
+import PIL.Image
+
 
 
 def parse_args():
@@ -62,6 +64,24 @@ def parse_args():
   parser.add_argument('--model_type', type=int, default=0,
                       help='Which GPU(s) to use. (default: `0`)')
   return parser.parse_args()
+
+
+def read_image(img):
+  I = PIL.Image.open(img)
+  I = I.convert('RGB')
+  I = (np.array(I, np.float32) / 255.0 - 0.5) * 2
+  if I.shape[-1] == 3:
+    I = I.transpose([2, 0, 1])
+  return I
+
+
+def read_images(src_dir):
+  imgs = []
+  for i, j, k in os.walk(src_dir):
+    for e in k:
+      if e.endswith('.png'):
+        imgs.append(read_image(os.path.join(i, e)))
+  return imgs
 
 
 def main():
@@ -128,10 +148,11 @@ def main():
 
   # Load image list.
   logger.info(f'Loading image list.')
-  image_list = []
-  with open(args.image_list, 'r') as f:
-    for line in f:
-      image_list.append(line.strip())
+  image_list = read_images(args.image_list)
+  # image_list = []
+  # with open(args.image_list, 'r') as f:
+  #   for line in f:
+  #     image_list.append(line.strip())
 
   # Invert images.
   logger.info(f'Start inversion.')
