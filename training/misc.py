@@ -132,7 +132,10 @@ def locate_network_pkl(run_id_or_run_dir_or_network_pkl, snapshot_or_network_pkl
 
     pkls = list_network_pkls(run_id_or_run_dir_or_network_pkl)
     if len(pkls) >= 1 and snapshot_or_network_pkl is None:
-        return pkls[-1]
+        if 'final' in pkls[-1]:
+            return pkls[-2]
+        else:
+            return pkls[-1]
 
     for pkl in pkls:
         try:
