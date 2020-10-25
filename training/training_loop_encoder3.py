@@ -117,6 +117,7 @@ def training_loop(
             print('Loading networks from "%s"...' % network_pkl)
             E, G, D, Gs = misc.load_pkl(network_pkl)
             start = int(network_pkl.split('-')[-1].split('.')[0]) // submit_config.batch_size
+            max_iters += start
             print('Start: ', start)
         else:
             print('Constructing networks...')
