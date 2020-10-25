@@ -148,11 +148,11 @@ def main():
 
   # Load image list.
   logger.info(f'Loading image list.')
-  image_list = read_images(args.image_list)
-  # image_list = []
-  # with open(args.image_list, 'r') as f:
-  #   for line in f:
-  #     image_list.append(line.strip())
+  # image_list = read_images(args.image_list)
+  image_list = []
+  with open(args.image_list, 'r') as f:
+    for line in f:
+      image_list.append(line.strip())
 
   # Invert images.
   logger.info(f'Start inversion.')
