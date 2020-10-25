@@ -66,6 +66,7 @@ def main():
   """Main function."""
   args = parse_args()
   os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_id
+  print(args.image_list)
   assert os.path.exists(args.image_list)
   image_list_name = os.path.splitext(os.path.basename(args.image_list))[0]
   output_dir = args.output_dir or f'results/inversion/{image_list_name}'
