@@ -87,7 +87,7 @@ def read_images(src_dir):
 def main():
   """Main function."""
   args = parse_args()
-  os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_id
+  # os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_id
   assert os.path.exists(args.image_list)
   image_list_name = os.path.splitext(os.path.basename(args.image_list))[0]
   output_dir = args.output_dir or f'results/inversion/{image_list_name}'
