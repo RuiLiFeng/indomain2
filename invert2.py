@@ -120,7 +120,7 @@ def main():
     setter = tf.assign(wp, wp_rnd)
   else:
     logger.info(f'  Use encoder output as the initialization for optimization.')
-    w_enc, _ = E.get_output_for(x, is_training=False)
+    w_enc, w_radius = E.get_output_for(x, is_training=False)
     wp_enc = tf.reshape(w_enc, latent_shape)
     setter = tf.assign(wp, wp_enc)
 
@@ -133,7 +133,7 @@ def main():
   loss_pix = tf.reduce_mean(tf.square(x - x_rec), axis=[1, 2, 3])
   if args.domain_regularizer:
     logger.info(f'  Involve encoder for optimization.')
-    w_enc_new, _ = E.get_output_for(x_rec, is_training=False)
+    w_enc_new, w_radius_new = E.get_output_for(x_rec, is_training=False)
     wp_enc_new = tf.reshape(w_enc_new, latent_shape)
     loss_enc = tf.reduce_mean(tf.square(wp - wp_enc_new), axis=[1, 2])
   else:
@@ -170,6 +170,7 @@ def main():
   names = ['' for _ in range(args.batch_size)]
   latent_codes_enc = []
   latent_codes = []
+  radius = []
   for img_idx in tqdm(range(0, len(image_list), args.batch_size), leave=False):
     # Load inputs.
     batch = image_list[img_idx:img_idx + args.batch_size]
@@ -180,8 +181,9 @@ def main():
     inputs = images.astype(np.float32) / 255 * 2.0 - 1.0
     # Run encoder.
     sess.run([setter], {x: inputs})
-    outputs = sess.run([wp, x_rec])
+    outputs = sess.run([wp, x_rec, w_radius])
     latent_codes_enc.append(outputs[0][0:len(batch)])
+    radius.append(outputs[2][0: len(batch)])
     outputs[1] = adjust_pixel_range(outputs[1])
     for i, _ in enumerate(batch):
       image = np.transpose(images[i], [1, 2, 0])
@@ -209,6 +211,8 @@ def main():
   np.save(f'{output_dir}/encoded_codes.npy',
           np.concatenate(latent_codes_enc, axis=0))
   np.save(f'{output_dir}/inverted_codes.npy',
+          np.concatenate(latent_codes, axis=0))
+  np.save(f'{output_dir}/inverted_codes_radius.npy',
           np.concatenate(latent_codes, axis=0))
   visualizer.save(f'{output_dir}/inversion.html')
 
