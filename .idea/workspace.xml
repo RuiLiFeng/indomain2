@@ -42,8 +42,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/invert2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-4711">
-              <caret line="66" lean-forward="true" selection-start-line="66" selection-end-line="66" />
+            <state relative-caret-position="-3358">
+              <caret line="89" column="29" selection-start-line="89" selection-end-line="90" />
               <folding>
                 <element signature="e#322#331#0" expanded="true" />
               </folding>
@@ -256,7 +256,7 @@
       <updated>1603207768173</updated>
       <workItem from="1603207796030" duration="8695000" />
       <workItem from="1603266219438" duration="4593000" />
-      <workItem from="1603338231763" duration="36304000" />
+      <workItem from="1603338231763" duration="37615000" />
     </task>
     <task id="LOCAL-00001" summary="minor revison.">
       <created>1603291884963</created>
@@ -269,20 +269,19 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="49592000" />
+    <option name="totallyTimeSpent" value="50903000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Favorites" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.14658849" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14658849" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" />
       <window_info anchor="bottom" id="Version Control" />
       <window_info anchor="bottom" id="Python Console" weight="0.4674221" />
-      <window_info anchor="bottom" id="Terminal" visible="true" weight="0.25921908" />
+      <window_info active="true" anchor="bottom" id="Terminal" visible="true" weight="0.18763557" />
       <window_info anchor="bottom" id="Event Log" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
@@ -611,8 +610,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/invert2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4711">
-          <caret line="66" lean-forward="true" selection-start-line="66" selection-end-line="66" />
+        <state relative-caret-position="-3358">
+          <caret line="89" column="29" selection-start-line="89" selection-end-line="90" />
           <folding>
             <element signature="e#322#331#0" expanded="true" />
           </folding>
