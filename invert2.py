@@ -181,7 +181,7 @@ def main():
     inputs = images.astype(np.float32) / 255 * 2.0 - 1.0
     # Run encoder.
     w_radius_np, _ = sess.run([w_radius, setter], {x: inputs})
-    print('W_radius %f' % w_radius_np)
+    print('W_radius %s' % w_radius_np)
     outputs = sess.run([wp, x_rec])
     latent_codes_enc.append(outputs[0][0:len(batch)])
     radius.append(w_radius_np[0: len(batch)])
