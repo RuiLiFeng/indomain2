@@ -356,6 +356,7 @@ def Encoder(
                 layer_idx = np.arange(num_layers)[np.newaxis, :, np.newaxis]
                 ones = np.ones(layer_idx.shape, dtype=np.float32)
                 coefs = tf.where(layer_idx < truncation_cutoff, truncation_psi * ones, ones)
-                latent_w = tflib.lerp(dlatent_avg, latent_w, coefs)
+                latent_w = tflib.lerp(dlatent_avg, tf.reshape(latent_w, [-1, num_layers, dlatent_size]), coefs)
+                latent_w = tf.reshape(latent_w, [-1, num_layers * dlatent_size])
 
     return latent_w, latent_radius
