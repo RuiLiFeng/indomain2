@@ -26,6 +26,12 @@ def main():
                         help='the name of the training dataset (defaults; ffhq)')
     parser.add_argument('--desc', type=str, default=None,
                         help='the name of the training dataset (defaults; ffhq)')
+    parser.add_argument('--truncation_psi', type=float, default=None,
+                        help='the name of the training dataset (defaults; ffhq)')
+    parser.add_argument('--truncation_cutoff', type=float, default=None,
+                        help='the name of the training dataset (defaults; ffhq)')
+    parser.add_argument('--dlatent_avg_path', type=str, default=None,
+                        help='the name of the training dataset (defaults; ffhq)')
     parser.add_argument('--result_dir', type=str, default='ffhq',
                         help='the name of the training dataset (defaults; ffhq)')
     parser.add_argument('--mirror_augment', action='store_false',
@@ -34,6 +40,9 @@ def main():
 
     train           = EasyDict(run_func_name='training.training_loop_encoder' + str(args.id) + '.training_loop')
     Encoder         = EasyDict(func_name='training.networks_encoder' + str(args.id) + '.Encoder')
+    Encoder.truncation_psi = args.truncation_psi
+    Encoder.truncation_cutoff = args.truncation_cutoff
+    Encoder.dlatent_avg_path = args.dlatent_avg_path
     E_opt           = EasyDict(beta1=0.9, beta2=0.99, epsilon=1e-8)
     D_opt           = EasyDict(beta1=0.9, beta2=0.99, epsilon=1e-8)
     E_loss          = EasyDict(func_name='training.loss_encoder.E_loss_nei',

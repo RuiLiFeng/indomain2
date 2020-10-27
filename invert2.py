@@ -171,7 +171,6 @@ def main():
   latent_codes_enc = []
   latent_codes = []
   radius = []
-  print(image_list)
   for img_idx in tqdm(range(0, len(image_list), args.batch_size), leave=False):
     # Load inputs.
     batch = image_list[img_idx:img_idx + args.batch_size]

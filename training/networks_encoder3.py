@@ -1,5 +1,6 @@
 import tensorflow as tf
 import numpy as np
+from dnnlib import tflib as tflib
 from tensorflow.python.training import moving_averages
 
 try:
@@ -320,6 +321,9 @@ def Encoder(
             num_gpus         = 8,      # Number of gpus to use
             dlatent_size     = 512,    # Disentangled latent (W) dimensionality.
             s0               = 4,      # Base number to decide how many residual block in encoder.
+            truncation_psi        = None,
+            truncation_cutoff     = None,
+            dlatent_avg_path      = None,
             **kwargs):
     num_blocks = int(np.log2(size / s0))
 
@@ -345,5 +349,13 @@ def Encoder(
             latent_radius = apply_bias(dense(hidden[:, :dlatent_size * num_layers], fmaps=1 * num_layers, use_wscale=True))
             latent_radius = tf.square(latent_radius) * alpha
         latent_w = sync_batch_norm(hidden[:, dlatent_size * num_layers:], is_training=is_training, num_dev=num_gpus)
+
+        if truncation_psi is not None and truncation_cutoff is not None and dlatent_avg_path is not None:
+            dlatent_avg = np.load(dlatent_avg_path)
+            with tf.variable_scope('Truncation'):
+                layer_idx = np.arange(num_layers)[np.newaxis, :, np.newaxis]
+                ones = np.ones(layer_idx.shape, dtype=np.float32)
+                coefs = tf.where(layer_idx < truncation_cutoff, truncation_psi * ones, ones)
+                latent_w = tflib.lerp(dlatent_avg, latent_w, coefs)
 
     return latent_w, latent_radius
