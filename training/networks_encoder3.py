@@ -347,7 +347,7 @@ def Encoder(
                                 initializer=tf.ones([1 * num_layers]), trainable=True)
         with tf.variable_scope('Latent_radius'):
             latent_radius = apply_bias(dense(hidden[:, :dlatent_size * num_layers], fmaps=1 * num_layers, use_wscale=True))
-            latent_radius = tf.square(latent_radius) * alpha
+            latent_radius = tf.square(latent_radius) * alpha + 2.0
         latent_w = sync_batch_norm(hidden[:, dlatent_size * num_layers:], is_training=is_training, num_dev=num_gpus)
 
         if truncation_psi is not None and truncation_cutoff is not None and dlatent_avg_path is not None:
