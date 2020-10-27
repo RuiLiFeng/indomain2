@@ -181,9 +181,10 @@ def main():
     inputs = images.astype(np.float32) / 255 * 2.0 - 1.0
     # Run encoder.
     sess.run([setter], {x: inputs})
-    outputs = sess.run([wp, x_rec, w_radius])
+    w_radius_np = sess.run(w_radius)
+    outputs = sess.run([wp, x_rec])
     latent_codes_enc.append(outputs[0][0:len(batch)])
-    radius.append(outputs[2][0: len(batch)])
+    radius.append(w_radius_np[0: len(batch)])
     outputs[1] = adjust_pixel_range(outputs[1])
     for i, _ in enumerate(batch):
       image = np.transpose(images[i], [1, 2, 0])
