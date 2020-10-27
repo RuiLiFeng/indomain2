@@ -180,8 +180,8 @@ def main():
       names[i] = os.path.splitext(os.path.basename(image_path))[0]
     inputs = images.astype(np.float32) / 255 * 2.0 - 1.0
     # Run encoder.
-    sess.run([setter], {x: inputs})
-    w_radius_np = sess.run(w_radius)
+    w_radius_np, _ = sess.run([w_radius, setter], {x: inputs})
+    print('W_radius %f' % w_radius_np)
     outputs = sess.run([wp, x_rec])
     latent_codes_enc.append(outputs[0][0:len(batch)])
     radius.append(w_radius_np[0: len(batch)])

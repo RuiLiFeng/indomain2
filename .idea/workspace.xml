@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="f39337b4-eaaa-47c5-8e5a-7b74b0769531" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/training/networks_encoder3.py" beforeDir="false" afterPath="$PROJECT_DIR$/training/networks_encoder3.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/invert2.py" beforeDir="false" afterPath="$PROJECT_DIR$/invert2.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -22,13 +22,25 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/training/networks_encoder3.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="318">
-              <caret line="360" lean-forward="true" selection-start-line="360" selection-end-line="360" />
+            <state relative-caret-position="417">
+              <caret line="342" lean-forward="true" selection-start-line="342" selection-end-line="342" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/invert2.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="231">
+              <caret line="183" column="36" lean-forward="true" selection-start-line="183" selection-start-column="36" selection-end-line="183" selection-end-column="36" />
+              <folding>
+                <element signature="e#322#331#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -95,15 +107,6 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/generate_figures.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-499">
-              <caret line="26" selection-start-line="26" selection-end-line="26" />
-            </state>
-          </provider>
-        </entry>
-      </file>
     </leaf>
   </component>
   <component name="FindInProjectRecents">
@@ -133,9 +136,9 @@
         <option value="$PROJECT_DIR$/invert.py" />
         <option value="$PROJECT_DIR$/training/training_loop_encoder3.py" />
         <option value="$PROJECT_DIR$/training/misc.py" />
-        <option value="$PROJECT_DIR$/invert2.py" />
         <option value="$PROJECT_DIR$/train_encoder.py" />
         <option value="$PROJECT_DIR$/training/networks_encoder3.py" />
+        <option value="$PROJECT_DIR$/invert2.py" />
       </list>
     </option>
   </component>
@@ -248,7 +251,7 @@
       <updated>1603207768173</updated>
       <workItem from="1603207796030" duration="8695000" />
       <workItem from="1603266219438" duration="4593000" />
-      <workItem from="1603338231763" duration="42463000" />
+      <workItem from="1603338231763" duration="42815000" />
     </task>
     <task id="LOCAL-00001" summary="minor revison.">
       <created>1603291884963</created>
@@ -261,7 +264,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="55751000" />
+    <option name="totallyTimeSpent" value="56103000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -552,16 +555,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/invert2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-99">
-          <caret line="96" column="45" lean-forward="true" selection-start-line="96" selection-start-column="2" selection-end-line="96" selection-end-column="45" />
-          <folding>
-            <element signature="e#322#331#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/training/networks_encoder2.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="508">
@@ -635,10 +628,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/training/networks_encoder3.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="318">
-          <caret line="360" lean-forward="true" selection-start-line="360" selection-end-line="360" />
+        <state relative-caret-position="417">
+          <caret line="342" lean-forward="true" selection-start-line="342" selection-end-line="342" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/invert2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="231">
+          <caret line="183" column="36" lean-forward="true" selection-start-line="183" selection-start-column="36" selection-end-line="183" selection-end-column="36" />
+          <folding>
+            <element signature="e#322#331#0" expanded="true" />
           </folding>
         </state>
       </provider>
