@@ -214,7 +214,7 @@ def main():
   np.save(f'{output_dir}/inverted_codes.npy',
           np.concatenate(latent_codes, axis=0))
   np.save(f'{output_dir}/inverted_codes_radius.npy',
-          np.concatenate(latent_codes, axis=0))
+          np.concatenate(radius, axis=0))
   visualizer.save(f'{output_dir}/inversion.html')
 
 

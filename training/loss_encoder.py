@@ -1,6 +1,7 @@
 """Loss functions for training encoder."""
 import tensorflow as tf
 from dnnlib.tflib.autosummary import autosummary
+import numpy as np
 
 
 #----------------------------------------------------------------------------
@@ -72,14 +73,18 @@ def D_logistic_simplegp(E, G, D, reals, r1_gamma=10.0):
     return loss, loss_fake, loss_real, loss_gp
 
 
-def E_loss_nei(E, G, D, perceptual_model, reals, feature_scale=0.00005, D_scale=0.1, perceptual_img_size=256):
+def E_loss_nei(E, G, D, perceptual_model, reals, feature_scale=0.00005, D_scale=0.1, perceptual_img_size=256, return_radius=False):
     num_layers, latent_dim = G.components.synthesis.input_shape[1:3]
     latent_w, latent_radius = E.get_output_for(reals, is_training=True)
     latent_wp = tf.reshape(latent_w, [reals.shape[0], num_layers, latent_dim])
     latent_radius = tf.reshape(latent_radius, [reals.shape[0], num_layers, 1])
 
-    latent_wp_Gaussian = tf.random.truncated_normal(shape=latent_wp.shape, stddev=latent_radius / 2.0) + latent_wp
-    latent_wp_Uniform = tf.random.uniform(shape=latent_wp.shape, minval=-1.0, maxval=1.0) * latent_radius + latent_wp
+    truncate = tf.random.truncated_normal(shape=latent_wp.shape, stddev=1)
+
+    latent_wp_Gaussian = truncate * tf.rsqrt(tf.reduce_mean(tf.reduce_sum(tf.square(truncate), axis=2))) * \
+                         latent_radius + latent_wp
+    latent_wp_Uniform = tf.random.uniform(shape=latent_wp.shape, minval=-1.0, maxval=1.0) * \
+                        latent_radius / np.sqrt(latent_dim / 3.0) + latent_wp
 
     fake_X_Gaussian = G.components.synthesis.get_output_for(latent_wp_Gaussian, randomize_noise=False)
     fake_X_Uniform = G.components.synthesis.get_output_for(latent_wp_Uniform, randomize_noise=False)
@@ -111,7 +116,10 @@ def E_loss_nei(E, G, D, perceptual_model, reals, feature_scale=0.00005, D_scale=
 
     loss = recon_loss + adv_loss
 
-    return loss, recon_loss, adv_loss
+    if return_radius:
+        return loss, recon_loss, adv_loss, tf.reduce_mean(latent_radius)
+    else:
+        return loss, recon_loss, adv_loss
 
 
 def D_logistic_simplegp_3(E, G, D, reals, r1_gamma=10.0):
@@ -121,7 +129,8 @@ def D_logistic_simplegp_3(E, G, D, reals, r1_gamma=10.0):
     latent_wp = tf.reshape(latent_w, [reals.shape[0], num_layers, latent_dim])
     latent_radius = tf.reshape(latent_radius, [reals.shape[0], num_layers, 1])
 
-    latent_wp_Uniform = tf.random.uniform(shape=latent_wp.shape, minval=-1.0, maxval=1.0) * latent_radius + latent_wp
+    latent_wp_Uniform = tf.random.uniform(shape=latent_wp.shape, minval=-1.0, maxval=1.0) * \
+                        latent_radius / np.sqrt(latent_dim / 3.0) + latent_wp
 
     fake_X_Uniform = G.components.synthesis.get_output_for(latent_wp_Uniform, randomize_noise=False)
     # fake_X = G.components.synthesis.get_output_for(latent_wp, randomize_noise=False)

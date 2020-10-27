@@ -142,6 +142,7 @@ def training_loop(
     D_loss_real = 0.
     D_loss_fake = 0.
     D_loss_grad = 0.
+    E_radius = 0.
     for gpu in range(submit_config.num_gpus):
         print('Building Graph on GPU %s' % str(gpu))
         with tf.name_scope('GPU%d' % gpu), tf.device('/gpu:%d' % gpu):
@@ -151,9 +152,10 @@ def training_loop(
             perceptual_model = PerceptualModel(img_size=[E_loss_args.perceptual_img_size, E_loss_args.perceptual_img_size], multi_layers=False)
             real_gpu = process_reals(real_split[gpu], mirror_augment, drange_data, drange_net)
             with tf.name_scope('E_loss'), tf.control_dependencies(None):
-                E_loss, recon_loss, adv_loss = dnnlib.util.call_func_by_name(E=E_gpu, G=G_gpu, D=D_gpu, perceptual_model=perceptual_model, reals=real_gpu, **E_loss_args)
+                E_loss, recon_loss, adv_loss, radius = dnnlib.util.call_func_by_name(E=E_gpu, G=G_gpu, D=D_gpu, perceptual_model=perceptual_model, reals=real_gpu, return_radius=True, **E_loss_args)
                 E_loss_rec += recon_loss
                 E_loss_adv += adv_loss
+                E_radius += radius
             with tf.name_scope('D_loss'), tf.control_dependencies(None):
                 D_loss, loss_fake, loss_real, loss_gp = dnnlib.util.call_func_by_name(E=E_gpu, G=G_gpu, D=D_gpu, reals=real_gpu, **D_loss_args)
                 D_loss_real += loss_real
@@ -168,6 +170,7 @@ def training_loop(
     D_loss_real /= submit_config.num_gpus
     D_loss_fake /= submit_config.num_gpus
     D_loss_grad /= submit_config.num_gpus
+    E_radius /= submit_config.num_gpus
 
     E_train_op = E_opt.apply_updates()
     D_train_op = D_opt.apply_updates()
@@ -195,14 +198,14 @@ def training_loop(
 
         batch_images = sess.run(image_batch_train)
         feed_dict = {real_train: batch_images}
-        _, recon_, adv_ = sess.run([E_train_op, E_loss_rec, E_loss_adv], feed_dict)
+        _, recon_, adv_ , radius_ = sess.run([E_train_op, E_loss_rec, E_loss_adv, E_radius], feed_dict)
         _, d_r_, d_f_, d_g_ = sess.run([D_train_op, D_loss_real, D_loss_fake, D_loss_grad], feed_dict)
 
         cur_nimg += submit_config.batch_size
 
         if it % 50 == 0:
-            print('Iter: %06d recon_loss: %-6.4f adv_loss: %-6.4f d_r_loss: %-6.4f d_f_loss: %-6.4f d_reg: %-6.4f time:%-12s' % (
-                it, recon_, adv_, d_r_, d_f_, d_g_, dnnlib.util.format_time(time.time() - start_time)))
+            print('Iter: %06d recon_loss: %-6.4f adv_loss: %-6.4f d_r_loss: %-6.4f d_f_loss: %-6.4f d_reg: %-6.4f radius %-2.6f time:%-12s' % (
+                it, recon_, adv_, d_r_, d_f_, d_g_, radius_, dnnlib.util.format_time(time.time() - start_time)))
             sys.stdout.flush()
             tflib.autosummary.save_summaries(summary_log, it)
 
