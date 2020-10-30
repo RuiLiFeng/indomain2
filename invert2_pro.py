@@ -211,6 +211,7 @@ def main():
         outputs = sess.run([wp, x_rec])
         outputs[1] = Gs.components.synthesis.run(np.mean(wp_list, axis=0), random_noise=False)
         outputs[1] = adjust_pixel_range(outputs[1])
+        print(np.mean(n_))
         for i, _ in enumerate(batch):
           if step == args.num_iterations:
             save_image(f'{output_dir}/{names[i]}_inv.png', outputs[1][i])
