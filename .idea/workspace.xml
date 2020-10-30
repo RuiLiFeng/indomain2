@@ -21,23 +21,12 @@
   <component name="ChangeListManager">
     <list default="true" id="f39337b4-eaaa-47c5-8e5a-7b74b0769531" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/invert2_pro.py" beforeDir="false" afterPath="$PROJECT_DIR$/invert2_pro.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
-  </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>test</find>
-      <find>fake_X</find>
-      <find>dataset_name</find>
-      <find>result</find>
-      <find>lear</find>
-      <find>dev_ls</find>
-      <find>global_</find>
-      <find>E.</find>
-    </findStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -87,7 +76,7 @@
       <workItem from="1603338231763" duration="50922000" />
       <workItem from="1603959810181" duration="1197000" />
       <workItem from="1603972346168" duration="6966000" />
-      <workItem from="1604049338019" duration="3705000" />
+      <workItem from="1604049338019" duration="4591000" />
     </task>
     <task id="LOCAL-00001" summary="minor revison.">
       <created>1603291884963</created>

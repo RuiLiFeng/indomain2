@@ -148,7 +148,7 @@ def main():
     radius = 4.0
     norm = tf.sqrt(tf.reduce_sum(tf.square(wp - wp_enc), axis=-1, keepdims=True))
     norm = tf.tile(norm, [1, 1, latent_shape[-1]])
-    P_wp = tf.where(norm > radius, (wp - wp_enc) * radius / norm, wp)
+    P_wp = tf.where(norm > radius, wp_enc + (wp - wp_enc) * radius / norm, wp)
 
     train_op = tf.assign(wp, P_wp)
   tflib.init_uninitialized_vars()
@@ -188,7 +188,6 @@ def main():
     inputs = images.astype(np.float32) / 255 * 2.0 - 1.0
     # Run encoder.
     w_radius_np, _ = sess.run([w_radius, setter], {x: inputs})
-    print('W_radius %s' % w_radius_np)
     outputs = sess.run([wp, x_rec])
     latent_codes_enc.append(outputs[0][0:len(batch)])
     radius.append(w_radius_np[0: len(batch)])
