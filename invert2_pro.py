@@ -203,7 +203,9 @@ def main():
     # Optimize latent codes.
     col_idx = 3
     for step in tqdm(range(1, args.num_iterations + 1), leave=False):
-      sess.run(train_op, {x: inputs})
+      _, n_, pwp_ = sess.run([train_op, norm, P_wp], {x: inputs})
+      print(n_)
+      print(pwp_)
       if step == args.num_iterations or step % save_interval == 0:
         outputs = sess.run([wp, x_rec])
         outputs[1] = adjust_pixel_range(outputs[1])
