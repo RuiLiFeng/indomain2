@@ -201,12 +201,15 @@ def main():
       visualizer.set_cell(i + img_idx, 2, image=outputs[1][i])
     # Optimize latent codes.
     col_idx = 3
+    wp_list = []
     for step in tqdm(range(1, args.num_iterations + 1), leave=False):
-      _, n_, pwp_ = sess.run([train_op, norm, P_wp], {x: inputs})
+      _, n_, pwp_, wp_ = sess.run([train_op, norm, P_wp, wp], {x: inputs})
       # print(n_)
       # print(pwp_)
+      wp_list.append(wp_)
       if step == args.num_iterations or step % save_interval == 0:
         outputs = sess.run([wp, x_rec])
+        outputs[1] = Gs.run(np.mean(wp_list, axis=0), random_noise=False)
         outputs[1] = adjust_pixel_range(outputs[1])
         for i, _ in enumerate(batch):
           if step == args.num_iterations:
