@@ -209,7 +209,7 @@ def main():
       wp_list.append(wp_)
       if step == args.num_iterations or step % save_interval == 0:
         outputs = sess.run([wp, x_rec])
-        outputs[1] = Gs.run(np.mean(wp_list, axis=0), random_noise=False)
+        outputs[1] = Gs.components.synthesis.run(np.mean(wp_list, axis=0), random_noise=False)
         outputs[1] = adjust_pixel_range(outputs[1])
         for i, _ in enumerate(batch):
           if step == args.num_iterations:
