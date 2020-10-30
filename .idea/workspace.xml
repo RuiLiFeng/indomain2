@@ -1,9 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="f39337b4-eaaa-47c5-8e5a-7b74b0769531" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/idinvert-master.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/idinvert-master.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/invert2_pro.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -49,6 +66,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\program\indomain2\indomain2" />
       <recent name="E:\program\idinvert-master\indomain2" />
       <recent name="E:\program\idinvert-master\indomain2\training" />
       <recent name="E:\program\idinvert-master\idinvert-master\training" />
@@ -69,7 +87,8 @@
       <workItem from="1603266219438" duration="4593000" />
       <workItem from="1603338231763" duration="50922000" />
       <workItem from="1603959810181" duration="1197000" />
-      <workItem from="1603972346168" duration="2060000" />
+      <workItem from="1603972346168" duration="6966000" />
+      <workItem from="1604049338019" duration="1796000" />
     </task>
     <task id="LOCAL-00001" summary="minor revison.">
       <created>1603291884963</created>
@@ -83,6 +102,17 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="minor revison." />
