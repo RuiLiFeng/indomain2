@@ -145,7 +145,7 @@ def main():
   optimizer = tf.train.AdamOptimizer(learning_rate=args.learning_rate)
   train_op_ = optimizer.minimize(loss, var_list=[wp])
   with tf.control_dependencies([train_op_]):
-    radius = 4.0
+    radius = 1.0
     norm = tf.sqrt(tf.reduce_sum(tf.square(wp - wp_enc), axis=-1, keepdims=True))
     norm = tf.tile(norm, [1, 1, latent_shape[-1]])
     P_wp = tf.where(norm > radius, wp_enc + (wp - wp_enc) * radius / norm, wp)
