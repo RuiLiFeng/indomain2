@@ -146,8 +146,8 @@ def main():
   train_op_ = optimizer.minimize(loss, var_list=[wp])
   with tf.control_dependencies([train_op_]):
     radius = 4.0
-    norm = tf.sqrt(tf.reduce_sum(tf.square(wp - wp_enc), axis=list(range(1, len(latent_shape))), keepdims=True))
-    norm = tf.tile(norm, [1,] + latent_shape[1:])
+    norm = tf.sqrt(tf.reduce_sum(tf.square(wp - wp_enc), axis=-1, keepdims=True))
+    norm = tf.tile(norm, [1, 1, latent_shape[-1]])
     P_wp = tf.where(norm > radius, (wp - wp_enc) * radius / norm, wp)
 
     train_op = tf.assign(wp, P_wp)
@@ -204,8 +204,8 @@ def main():
     col_idx = 3
     for step in tqdm(range(1, args.num_iterations + 1), leave=False):
       _, n_, pwp_ = sess.run([train_op, norm, P_wp], {x: inputs})
-      print(n_)
-      print(pwp_)
+      # print(n_)
+      # print(pwp_)
       if step == args.num_iterations or step % save_interval == 0:
         outputs = sess.run([wp, x_rec])
         outputs[1] = adjust_pixel_range(outputs[1])
