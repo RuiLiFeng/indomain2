@@ -30,8 +30,6 @@ def parse_args():
   parser = argparse.ArgumentParser()
   parser.add_argument('model_path', type=str,
                       help='Path to the pre-trained model.')
-  parser.add_argument('decoder_path', type=str,
-                      help='Path to the pre-trained model.')
   parser.add_argument('image_list', type=str,
                       help='List of images to invert.')
   parser.add_argument('-o', '--output_dir', type=str, default='',
@@ -50,7 +48,7 @@ def parse_args():
   parser.add_argument('-R', '--random_init', action='store_true',
                       help='Whether to use random initialization instead of '
                            'the output from encoder. (default: False)')
-  parser.add_argument('-E', '--discriminator_regularizer', action='store_false',
+  parser.add_argument('-E', '--domain_regularizer', action='store_false',
                       help='Whether to use domain regularizer for '
                            'optimization. (default: True)')
   parser.add_argument('--loss_weight_feat', type=float, default=5e-5,
@@ -86,13 +84,6 @@ def read_images(src_dir):
   return imgs
 
 
-def fp32(*values):
-  if len(values) == 1 and isinstance(values[0], tuple):
-    values = values[0]
-  values = tuple(tf.cast(v, tf.float32) for v in values)
-  return values if len(values) >= 2 else values[0]
-
-
 def main():
   """Main function."""
   args = parse_args()
@@ -105,10 +96,7 @@ def main():
   logger.info(f'Loading model.')
   tflib.init_tf({'rnd.np_random_seed': 1000})
   with open(args.model_path, 'rb') as f:
-    E, _, D, Gs = pickle.load(f)
-
-  # with open(args.decoder_path, 'rb') as f:
-  #   _, D, _ = pickle.load(f)
+    E, _, _, Gs = pickle.load(f)
 
   # Get input size.
   image_size = E.input_shape[2]
@@ -123,9 +111,17 @@ def main():
   x_255 = (tf.transpose(x, [0, 2, 3, 1]) + 1) / 2 * 255
   latent_shape = Gs.components.synthesis.input_shape
   latent_shape[0] = args.batch_size
+  radius = 2
   wp = tf.get_variable(shape=latent_shape, name='latent_code')
+  truncate = tf.random.truncated_normal(shape=wp.shape, stddev=1)
+  latent_wp_Gaussian = truncate * tf.rsqrt(tf.reduce_mean(tf.reduce_sum(tf.square(truncate), axis=2))) * \
+                       radius + wp
+  latent_wp_Uniform = tf.random.uniform(shape=wp.shape, minval=-1.0, maxval=1.0) * \
+                      radius / np.sqrt(latent_shape[-1] / 3.0) + wp
   x_rec = Gs.components.synthesis.get_output_for(wp, randomize_noise=False)
+  x_rec_Gaussian = Gs.components.synthesis.get_output_for(latent_wp_Gaussian, randomize_noise=False)
   x_rec_255 = (tf.transpose(x_rec, [0, 2, 3, 1]) + 1) / 2 * 255
+  x_rec_Gaussian_255 = (tf.transpose(x_rec_Gaussian, [0, 2, 3, 1]) + 1) / 2 * 255
   if args.random_init:
     logger.info(f'  Use random initialization for optimization.')
     wp_rnd = tf.random.normal(shape=latent_shape, name='latent_code_init')
@@ -140,28 +136,22 @@ def main():
   logger.info(f'Setting configuration for optimization.')
   perceptual_model = PerceptualModel([image_size, image_size], False)
   x_feat = perceptual_model(x_255)
-  x_rec_feat = perceptual_model(x_rec_255)
+  x_rec_feat = perceptual_model(x_rec_Gaussian_255)
   loss_feat = tf.reduce_mean(tf.square(x_feat - x_rec_feat), axis=[1])
-  loss_pix = tf.reduce_mean(tf.square(x - x_rec), axis=[1, 2, 3])
-  if args.discriminator_regularizer:
-    logger.info(f'  Involve Discriminator for optimization.')
-    loss_dis = tf.nn.softplus(-fp32(D.get_output_for(x_rec, None)))
+  loss_pix = tf.reduce_mean(tf.square(x - x_rec_Gaussian), axis=[1, 2, 3])
+  if args.domain_regularizer:
+    logger.info(f'  Involve encoder for optimization.')
+    w_enc_new, w_radius_new = E.get_output_for(x_rec, is_training=False)
+    wp_enc_new = tf.reshape(w_enc_new, latent_shape)
+    loss_enc = tf.reduce_mean(tf.square(wp - wp_enc_new), axis=[1, 2])
   else:
-    logger.info(f'  Do NOT involve Discriminator for optimization.')
-    loss_dis = 0
+    logger.info(f'  Do NOT involve encoder for optimization.')
+    loss_enc = 0
   loss = (loss_pix +
           args.loss_weight_feat * loss_feat +
-          args.loss_weight_enc * loss_dis)
+          args.loss_weight_enc * loss_enc)
   optimizer = tf.train.AdamOptimizer(learning_rate=args.learning_rate)
-  train_op_ = optimizer.minimize(loss, var_list=[wp])
-  with tf.control_dependencies([train_op_]):
-    radius = 1.0
-    norm = tf.sqrt(tf.reduce_sum(tf.square(wp - wp_enc), axis=-1, keepdims=True))
-    norm = tf.tile(norm, [1, 1, latent_shape[-1]])
-    P_wp = tf.where(norm > radius, wp_enc + (wp - wp_enc) * radius / norm, wp)
-
-    train_op = tf.assign(wp, P_wp)
-
+  train_op = optimizer.minimize(loss, var_list=[wp])
   tflib.init_uninitialized_vars()
 
   # Load image list.
@@ -199,6 +189,7 @@ def main():
     inputs = images.astype(np.float32) / 255 * 2.0 - 1.0
     # Run encoder.
     w_radius_np, _ = sess.run([w_radius, setter], {x: inputs})
+    print('W_radius %s' % w_radius_np)
     outputs = sess.run([wp, x_rec])
     latent_codes_enc.append(outputs[0][0:len(batch)])
     radius.append(w_radius_np[0: len(batch)])
