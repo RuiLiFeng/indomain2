@@ -34,7 +34,7 @@ def main(hps):
     sess = tensorflow_session()
 
     data_dir = ''
-    sub_dir = ['/gdata2/fengrl/inverted/indomain2-500/', '/gdata2/fengrl/inverted/indomain2-r2-500/']
+    sub_dir = ['/gdata2/fengrl/inverted/indomain2-proj-500/', '/gdata2/fengrl/inverted/2trunc-proj-500/']
 
     loss_list = []
     real_images = sorted(glob.glob('/gdata2/fengrl/inverted/ffhq-256-500img/*.png'))
