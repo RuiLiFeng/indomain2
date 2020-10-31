@@ -2,8 +2,8 @@ import numpy as np
 import tensorflow as tf
 import os
 # from training.misc import progress as tqdm
-import argparse
 import time
+import argparse
 import cv2
 import glob
 
@@ -108,9 +108,10 @@ def tqdm(items, desc='', total=None, min_delay=0.1, displaytype='eta', **kwargs)
         yield item
     t_total = time.time() - t_start
     print("\r%s%d/%d (100.00%%) (took %d:%02d)" % ((desc, total, total) +
+                                                   divmod(t_total, 60)))
 
 
-                                                   if __name__ == "__main__":
+if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--batch_size", type=int, default=10, help="")
