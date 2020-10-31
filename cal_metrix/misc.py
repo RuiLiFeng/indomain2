@@ -17,8 +17,8 @@ import scipy.ndimage
 import PIL.Image
 
 import config
-import dataset
-import legacy
+from training import dataset
+from cal_metrix import legacy
 
 #----------------------------------------------------------------------------
 # Convenience wrappers for pickle that are able to load data produced by

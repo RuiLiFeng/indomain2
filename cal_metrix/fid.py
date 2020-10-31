@@ -10,8 +10,8 @@ import sys
 import tensorflow as tf
 
 import numpy as np
-import misc
-import tfutil
+from cal_metrix import misc
+from cal_metrix import tfutil
 import time
 import cv2
 import glob
@@ -114,10 +114,10 @@ def get_train_data(sess, data_dir, batch_size):
 
 def evaluate_metrics(log, metrics, num_images, real_passes, image_shape, minibatch_size=64):
     metric_class_names = {
-        'swd':      'metrics.sliced_wasserstein.API',
-        'fid':      'metrics.frechet_inception_distance.API',
-        'is':       'metrics.inception_score.API',
-        'msssim':   'metrics.ms_ssim.API',
+        'swd':      'cal_metrix.metrics.sliced_wasserstein.API',
+        'fid':      'cal_metrix.metrics.frechet_inception_distance.API',
+        'is':       'cal_metrix.metrics.inception_score.API',
+        'msssim':   'cal_metrix.metrics.ms_ssim.API',
     }
 
     result_subdir = 'results'
