@@ -20,6 +20,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f39337b4-eaaa-47c5-8e5a-7b74b0769531" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/invert2_dis.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -75,7 +76,7 @@
       <workItem from="1603338231763" duration="50922000" />
       <workItem from="1603959810181" duration="1197000" />
       <workItem from="1603972346168" duration="6966000" />
-      <workItem from="1604049338019" duration="7095000" />
+      <workItem from="1604049338019" duration="8829000" />
     </task>
     <task id="LOCAL-00001" summary="minor revison.">
       <created>1603291884963</created>
