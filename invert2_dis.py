@@ -215,8 +215,6 @@ def main():
     col_idx = 3
     for step in tqdm(range(1, args.num_iterations + 1), leave=False):
       sess.run(train_op, {x: inputs})
-      for _ in range(5):
-        sess.run(project_op)
       if step == args.num_iterations or step % save_interval == 0:
         outputs = sess.run([wp, x_rec])
         outputs[1] = adjust_pixel_range(outputs[1])
