@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
 import os
-from tqdm import tqdm
+from training.misc import progress as tqdm
 import argparse
 import cv2
 import glob

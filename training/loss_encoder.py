@@ -73,7 +73,7 @@ def D_logistic_simplegp(E, G, D, reals, r1_gamma=10.0):
     return loss, loss_fake, loss_real, loss_gp
 
 
-def E_loss_nei(E, G, D, perceptual_model, reals, feature_scale=0.00005, D_scale=0.1, perceptual_img_size=256, return_radius=False):
+def E_loss_nei(E, G, D, perceptual_model, reals, feature_scale=0.00005, D_scale=0.1, perceptual_img_size=256, return_radius=False, latent_discriminator=None):
     num_layers, latent_dim = G.components.synthesis.input_shape[1:3]
     latent_w, latent_radius = E.get_output_for(reals, is_training=True)
     latent_wp = tf.reshape(latent_w, [reals.shape[0], num_layers, latent_dim])
@@ -115,6 +115,16 @@ def E_loss_nei(E, G, D, perceptual_model, reals, feature_scale=0.00005, D_scale=
         adv_loss = autosummary('Loss/scores/adv_loss', adv_loss)
 
     loss = recon_loss + adv_loss
+    if latent_discriminator is not None:
+        fake_latent_score_Uniform = fp32(latent_discriminator.get_output_for(latent_wp_Uniform))
+        with tf.varibale_scope('dlatent_adv_loss'):
+            dadv_loss = 0.1 * tf.reduce_mean(tf.nn.softplus(-fake_latent_score_Uniform))
+            dadv_loss = autosummary('Loss/scores/dadv_loss', dadv_loss)
+        loss += dadv_loss
+        if return_radius:
+            return loss, recon_loss, adv_loss, dadv_loss, tf.reduce_mean(latent_radius)
+        else:
+            return loss, recon_loss, adv_loss, dadv_loss
 
     if return_radius:
         return loss, recon_loss, adv_loss, tf.reduce_mean(latent_radius)
@@ -122,7 +132,7 @@ def E_loss_nei(E, G, D, perceptual_model, reals, feature_scale=0.00005, D_scale=
         return loss, recon_loss, adv_loss
 
 
-def D_logistic_simplegp_3(E, G, D, reals, r1_gamma=10.0):
+def D_logistic_simplegp_3(E, G, D, reals, r1_gamma=10.0, latent_discriminator=None):
 
     num_layers, latent_dim = G.components.synthesis.input_shape[1:3]
     latent_w, latent_radius = E.get_output_for(reals, is_training=True)
@@ -148,4 +158,15 @@ def D_logistic_simplegp_3(E, G, D, reals, r1_gamma=10.0):
         r1_penalty = autosummary('Loss/r1_penalty', r1_penalty)
         loss_gp = r1_penalty * (r1_gamma * 0.5)
     loss = loss_fake + loss_real + loss_gp
+    if latent_discriminator is not None:
+        z = tf.random.normal([reals.shape[0], latent_dim])
+        w = G.components.mapping.get_output_for(z, None)
+        w_score_out = fp32(latent_discriminator.get_output_for(w))
+        fake_latent_score_Uniform = fp32(latent_discriminator.get_output_for(latent_wp_Uniform))
+        loss_w = tf.reduce_mean(tf.nn.softplus(-w_score_out))
+        loss_w = autosummary('Loss/scores/w', loss_w)
+        loss_fake_latent = tf.reduce_mean(tf.nn.softplus(fake_latent_score_Uniform))
+        loss_fake_latent = autosummary('Loss/scores/fake', loss_fake_latent)
+        loss += loss_w
+        loss += loss_fake_latent
     return loss, loss_fake, loss_real, loss_gp
