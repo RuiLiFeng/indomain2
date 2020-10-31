@@ -113,6 +113,10 @@ def get_train_data(sess, data_dir, batch_size):
 
 
 def evaluate_metrics(log, metrics, num_images, real_passes, image_shape, minibatch_size=64):
+    import cal_metrix.metrics.frechet_inception_distance
+    import cal_metrix.metrics.sliced_wasserstein
+    import cal_metrix.metrics.inception_score
+    import cal_metrix.metrics.ms_ssim
     metric_class_names = {
         'swd':      'cal_metrix.metrics.sliced_wasserstein.API',
         'fid':      'cal_metrix.metrics.frechet_inception_distance.API',
