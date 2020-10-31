@@ -40,7 +40,7 @@ import scipy as sp
 import os
 import gzip, pickle
 import tensorflow as tf
-from scipy.misc import imread
+from PIL.Image import open as imread
 import pathlib
 import urllib
 
