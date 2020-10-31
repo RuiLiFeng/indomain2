@@ -50,7 +50,7 @@ def parse_args():
   parser.add_argument('-R', '--random_init', action='store_true',
                       help='Whether to use random initialization instead of '
                            'the output from encoder. (default: False)')
-  parser.add_argument('-E', '--domain_regularizer', action='store_false',
+  parser.add_argument('-E', '--discriminator_regularizer', action='store_false',
                       help='Whether to use domain regularizer for '
                            'optimization. (default: True)')
   parser.add_argument('--loss_weight_feat', type=float, default=5e-5,
@@ -143,30 +143,24 @@ def main():
   x_rec_feat = perceptual_model(x_rec_255)
   loss_feat = tf.reduce_mean(tf.square(x_feat - x_rec_feat), axis=[1])
   loss_pix = tf.reduce_mean(tf.square(x - x_rec), axis=[1, 2, 3])
-  if args.domain_regularizer:
-    logger.info(f'  Involve encoder for optimization.')
-    w_enc_new, w_radius_new = E.get_output_for(x_rec, is_training=False)
-    wp_enc_new = tf.reshape(w_enc_new, latent_shape)
-    loss_enc = tf.reduce_mean(tf.square(wp - wp_enc_new), axis=[1, 2])
+  if args.discriminator_regularizer:
+    logger.info(f'  Involve Discriminator for optimization.')
+    loss_dis = tf.nn.softplus(-fp32(D.get_output_for(x_rec, None)))
   else:
-    logger.info(f'  Do NOT involve encoder for optimization.')
-    loss_enc = 0
+    logger.info(f'  Do NOT involve Discriminator for optimization.')
+    loss_dis = 0
   loss = (loss_pix +
           args.loss_weight_feat * loss_feat +
-          args.loss_weight_enc * loss_enc)
+          args.loss_weight_enc * loss_dis)
   optimizer = tf.train.AdamOptimizer(learning_rate=args.learning_rate)
-  train_op = optimizer.minimize(loss, var_list=[wp])
+  train_op_ = optimizer.minimize(loss, var_list=[wp])
+  with tf.control_dependencies([train_op_]):
+    radius = 1.0
+    norm = tf.sqrt(tf.reduce_sum(tf.square(wp - wp_enc), axis=-1, keepdims=True))
+    norm = tf.tile(norm, [1, 1, latent_shape[-1]])
+    P_wp = tf.where(norm > radius, wp_enc + (wp - wp_enc) * radius / norm, wp)
 
-  # Project Op
-  rec_scores_out = fp32(D.get_output_for(x_rec, None))
-  logger.info(f'  Involve encoder for optimization.')
-  w_enc_new, w_radius_new = E.get_output_for(x_rec, is_training=False)
-  wp_enc_new = tf.reshape(w_enc_new, latent_shape)
-  norm = tf.reduce_mean(tf.square(wp - wp_enc_new), axis=[1, 2])
-  loss_proj = norm + tf.nn.softplus(-rec_scores_out)
-  optimizer_pro = tf.train.AdamOptimizer(learning_rate=args.learning_rate)
-  project_op = optimizer_pro.minimize(loss_proj, var_list=[wp])
-
+    train_op = tf.assign(wp, P_wp)
 
   tflib.init_uninitialized_vars()
 
