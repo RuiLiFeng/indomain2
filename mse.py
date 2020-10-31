@@ -7,6 +7,7 @@ import argparse
 import cv2
 import glob
 import sys
+import re
 
 
 def adjust_dynamic_range(data, drange_in, drange_out):
@@ -37,12 +38,12 @@ def main(hps):
     sub_dir = ['/gdata2/fengrl/inverted/indomain2-proj-500/', '/gdata2/fengrl/inverted/2trunc-proj-500/']
 
     loss_list = []
-    real_images = sorted(glob.glob('/gdata2/fengrl/inverted/ffhq-256-500img/*.png'))
+    real_images = sorted(glob.glob('/gdata2/fengrl/inverted/ffhq-256-500img/*.png'), key=lambda x:int(re.findall('\d+',x)[-1]))
     num_images = len(real_images)
     print('real image: ', num_images)
     for dir in tqdm(sub_dir):
         img_dir = os.path.join(data_dir, dir)
-        fake_images = sorted(glob.glob(img_dir + '/*_inv.png'))
+        fake_images = sorted(glob.glob(img_dir + '/*_inv.png'), key=lambda x:int(re.findall('\d+',x)[-1]))
         print('fake image: ', len(fake_images))
         total_loss = 0
         for ind in tqdm(range(0, num_images, hps.batch_size)):
