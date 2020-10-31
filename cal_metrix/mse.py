@@ -32,15 +32,15 @@ def main(hps):
     sess = tensorflow_session()
 
     data_dir = ''
-    sub_dir = ['/home/zhu/Desktop/inv_ffhq_clu/', '/home/zhu/Desktop/inv_ffhq_img2/']
+    sub_dir = ['/gdata2/fengrl/inverted/indomain2-500/', '/gdata2/fengrl/inverted/indomain2-r2-500/']
 
     loss_list = []
-    real_images = sorted(glob.glob('/home/zhu/Desktop/inv_ffhq_clu/*_000000.jpg'))
+    real_images = sorted(glob.glob('/gdata2/fengrl/inverted/ffhq-256-500img/*.png'))
     num_images = len(real_images)
     print('real image: ', num_images)
     for dir in tqdm(sub_dir):
         img_dir = os.path.join(data_dir, dir)
-        fake_images = sorted(glob.glob(img_dir + '/*_000011.jpg'))
+        fake_images = sorted(glob.glob(img_dir + '/*_inv.png'))
         print('fake image: ', len(fake_images))
         total_loss = 0
         for ind in tqdm(range(0, num_images, hps.batch_size)):
