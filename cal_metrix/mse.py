@@ -6,6 +6,7 @@ import time
 import argparse
 import cv2
 import glob
+import sys
 
 
 def adjust_dynamic_range(data, drange_in, drange_out):
