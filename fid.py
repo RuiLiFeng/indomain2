@@ -202,7 +202,7 @@ def evaluate_metrics(log, metrics, num_images, real_passes, image_shape, minibat
                '/gdata2/fengrl/inverted/2trunc-proj-500/']
 
     for dir in sub_dir:
-        img_dir = data_dir + dir + '/*_inv.png'
+        img_dir = data_dir + dir + '/*_enc.png'
         Images = glob.glob(img_dir)[:500]
         print('number of image in {}'.format(len(Images)))
         Images = np.random.permutation(Images)
