@@ -1,8 +1,9 @@
 import numpy as np
 import tensorflow as tf
 import os
-from training.misc import progress as tqdm
+# from training.misc import progress as tqdm
 import argparse
+import time
 import cv2
 import glob
 
@@ -71,7 +72,45 @@ def main(hps):
         print(sub_dir[it])
         print(loss_list[it])
 
-if __name__ == "__main__":
+
+def tqdm(items, desc='', total=None, min_delay=0.1, displaytype='eta', **kwargs):
+    """
+    Returns a generator over `items`, printing the number and percentage of
+    items processed and the estimated remaining processing time before yielding
+    the next item. `total` gives the total number of items (required if `items`
+    has no length), and `min_delay` gives the minimum time in seconds between
+    subsequent prints. `desc` gives an optional prefix text (end with a space).
+    """
+    total = total or len(items)
+    t_start = time.time()
+    t_last = 0
+    for n, item in enumerate(items):
+        t_now = time.time()
+        if t_now - t_last > min_delay:
+            print("\r%s%d/%d (%6.2f%%)" % (
+                desc, n + 1, total, n / float(total) * 100), end=" ")
+            if n > 0:
+
+                if displaytype == 's1k':  # minutes/seconds for 1000 iters
+                    next_1000 = n + (1000 - n % 1000)
+                    t_done = t_now - t_start
+                    t_1k = t_done / n * next_1000
+                    outlist = list(divmod(t_done, 60)) + list(divmod(t_1k - t_done, 60))
+                    print("(TE/ET1k: %d:%02d / %d:%02d)" % tuple(outlist), end=" ")
+                else:  # displaytype == 'eta':
+                    t_done = t_now - t_start
+                    t_total = t_done / n * total
+                    outlist = list(divmod(t_done, 60)) + list(divmod(t_total - t_done, 60))
+                    print("(TE/ETA: %d:%02d / %d:%02d)" % tuple(outlist), end=" ")
+
+            sys.stdout.flush()
+            t_last = t_now
+        yield item
+    t_total = time.time() - t_start
+    print("\r%s%d/%d (100.00%%) (took %d:%02d)" % ((desc, total, total) +
+
+
+                                                   if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--batch_size", type=int, default=10, help="")
