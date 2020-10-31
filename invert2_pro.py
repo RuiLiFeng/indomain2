@@ -40,6 +40,8 @@ def parse_args():
                       help='Batch size. (default: 4)')
   parser.add_argument('--learning_rate', type=float, default=0.01,
                       help='Learning rate for optimization. (default: 0.01)')
+  parser.add_argument('--radius', type=float, default=1.0,
+                      help='Learning rate for optimization. (default: 0.01)')
   parser.add_argument('--num_iterations', type=int, default=100,
                       help='Number of optimization iterations. (default: 100)')
   parser.add_argument('--num_results', type=int, default=5,
@@ -145,7 +147,7 @@ def main():
   optimizer = tf.train.AdamOptimizer(learning_rate=args.learning_rate)
   train_op_ = optimizer.minimize(loss, var_list=[wp])
   with tf.control_dependencies([train_op_]):
-    radius = 1.0
+    radius = args.radius
     norm = tf.sqrt(tf.reduce_sum(tf.square(wp - wp_enc), axis=-1, keepdims=True))
     norm = tf.tile(norm, [1, 1, latent_shape[-1]])
     P_wp = tf.where(norm > radius, wp_enc + (wp - wp_enc) * radius / norm, wp)
