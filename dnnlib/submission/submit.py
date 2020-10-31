@@ -210,7 +210,7 @@ def _populate_run_dir(run_dir: str, submit_config: SubmitConfig) -> None:
     if submit_config.run_dir_extra_files is not None:
         files += submit_config.run_dir_extra_files
 
-    files = [(f[0], os.path.join(run_dir, "src", f[1])) for f in files]
+    files = [(f[0], os.path.join(run_dir, "src", f[1])) for f in files if 'cal_metrix' not in f[1]]
     files += [(os.path.join(dnnlib_module_dir_path, "submission", "_internal", "run.py"), os.path.join(run_dir, "run.py"))]
 
     util.copy_files_and_create_dirs(files)
