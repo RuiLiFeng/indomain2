@@ -15,7 +15,8 @@ import tfutil
 import time
 import cv2
 import glob
-from tqdm import tqdm
+# from tqdm import tqdm
+from misc import tqdm
 
 
 def convert_images_to_uint8(images, drange=[-1,1], nchw_to_nhwc=False, shrink=1):
@@ -119,7 +120,7 @@ def evaluate_metrics(log, metrics, num_images, real_passes, image_shape, minibat
     loops = num_images // minibatch_size
     print('Total loops of image: {}'.format(loops))
 
-    Real = glob.glob('/home/zhu/Desktop/png/*.png')
+    Real = glob.glob('/gdata2/fengrl/inverted/ffhq-256-500img/*.png')
     print('Real number of image :', len(Real))
     Real = np.random.permutation(Real)
 
@@ -150,10 +151,10 @@ def evaluate_metrics(log, metrics, num_images, real_passes, image_shape, minibat
 
 
     data_dir = ''
-    sub_dir = ['/home/zhu/Desktop/ECCV_2020/Tower/quat/imgs/inter',
-               '/home/zhu/Desktop/ECCV_2020/Tower/quat/ours/inter',
-               '/home/zhu/Desktop/inters/retrival_single',
-               '/home/zhu/Desktop/inters/clus_single']
+    sub_dir = ['/gdata2/fengrl/inverted/indomain2-proj-500/',
+               '/gdata2/fengrl/inverted/indomain2-500/',
+               '/gdata2/fengrl/inverted/indomain2-r2-500/',
+               '/gdata2/fengrl/inverted/2trunc-proj-500/']
 
     for dir in sub_dir:
         img_dir = data_dir + dir + '/*.png'
