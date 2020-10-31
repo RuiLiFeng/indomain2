@@ -207,7 +207,7 @@ def _handle_path(path, sess):
     else:
         path = pathlib.Path(path)
         files = list(path.glob('*.jpg')) + list(path.glob('*.png'))
-        x = np.array([imread(str(fn)).astype(np.float32) for fn in files])
+        x = np.array([imread(str(fn)).convert('RGB').astype(np.float32) for fn in files])
         m, s = calculate_activation_statistics(x, sess)
     return m, s
 
