@@ -117,7 +117,7 @@ def E_loss_nei(E, G, D, perceptual_model, reals, feature_scale=0.00005, D_scale=
     loss = recon_loss + adv_loss
     if latent_discriminator is not None:
         fake_latent_score_Uniform = fp32(latent_discriminator.get_output_for(latent_wp_Uniform))
-        with tf.varibale_scope('dlatent_adv_loss'):
+        with tf.variable_scope('dlatent_adv_loss'):
             dadv_loss = 0.1 * tf.reduce_mean(tf.nn.softplus(-fake_latent_score_Uniform))
             dadv_loss = autosummary('Loss/scores/dadv_loss', dadv_loss)
         loss += dadv_loss
