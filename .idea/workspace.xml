@@ -19,8 +19,11 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f39337b4-eaaa-47c5-8e5a-7b74b0769531" name="Default Changelist" comment="">
+    <list default="true" id="f39337b4-eaaa-47c5-8e5a-7b74b0769531" name="Default Changelist" comment="handle conflicts..">
+      <change beforePath="$PROJECT_DIR$/.idea/idinvert-master.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/idinvert-master.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/save_latent_images_pairs.py" beforeDir="false" afterPath="$PROJECT_DIR$/save_latent_images_pairs.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,7 +66,19 @@
       <recent name="E:\program\idinvert-master\idinvert-master\training" />
     </key>
   </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SpellCheckerSettings" BundledDictionaries="0" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -99,7 +114,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
@@ -114,11 +131,11 @@
       <screen x="65" y="24" width="1855" height="1056" />
     </state>
     <state x="604" y="134" key="CommitChangelistDialog2/65.24.1855.1056@65.24.1855.1056" timestamp="1603291884863" />
-    <state x="-998" y="27" key="SettingsEditor" timestamp="1603972367430">
-      <screen x="-1080" y="-240" width="1080" height="1880" />
+    <state x="486" y="174" key="SettingsEditor" timestamp="1604231487017">
+      <screen x="65" y="24" width="1855" height="1056" />
     </state>
     <state x="-998" y="27" key="SettingsEditor/0.0.1504.963/-1080.-240.1080.1880@-1080.-240.1080.1880" timestamp="1603972367430" />
-    <state x="486" y="174" key="SettingsEditor/65.24.1855.1056@65.24.1855.1056" timestamp="1603291648999" />
+    <state x="486" y="174" key="SettingsEditor/65.24.1855.1056@65.24.1855.1056" timestamp="1604231487017" />
     <state x="592" y="275" key="Vcs.Push.Dialog.v2" timestamp="1603291893644">
       <screen x="65" y="24" width="1855" height="1056" />
     </state>

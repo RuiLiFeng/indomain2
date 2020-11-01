@@ -34,7 +34,7 @@ def parse_args():
                       help='Directory to save the results. If not specified, '
                            '`./results/inversion/${IMAGE_LIST}` '
                            'will be used by default.')
-  parser.add_argument('--batch_size', type=int, default=32,
+  parser.add_argument('--batch_size', type=int, default=50,
                       help='Batch size. (default: 32)')
   parser.add_argument('--viz_size', type=int, default=256,
                       help='Image size for visualization. (default: 256)')
@@ -46,8 +46,12 @@ def parse_args():
                       help='decide start from which images')
   parser.add_argument('--end', type=int, default=1,
                       help='decide end with which images')
-  parser.add_argument('--attr', type=str, default='male',
-                      help='')
+  parser.add_argument('--max_num_layers', type=int, default=8,
+                      help='the maximum layer to replace')
+  parser.add_argument('--total_nums', type=int, default=1e+5,
+                      help='the maximum layer to replace')
+  parser.add_argument('--save_raw', action='store_true',
+                      help='Whether to save raw images')
   return parser.parse_args()
 
 
@@ -70,49 +74,17 @@ def main():
   input_shape = E.input_shape
   num_layers, z_dim = Gs.components.synthesis.input_shape[1:3]
 
-  ATTRS = {'age': [1,2,3], 'pose': [0,1,2], 'male': [2,3,4,5], 'expression': [3,4,5], 'glass': [1,2,3]}
+  # ATTRS = {'age': [1,2,3], 'pose': [0,1,2], 'male': [2,3,4,5], 'expression': [3,4,5], 'glass': [1,2,3]}
   # Build graph.
   logger.info(f'Building graph.')
   sess = tf.get_default_session()
   x = tf.placeholder(tf.float32, shape=input_shape, name='real_image')
-  latent_w = tf.placeholder(tf.float32, shape=[args.batch_size, num_layers, z_dim], name='latent_w')
-  flag = tf.placeholder(tf.float32, shape=[], name='flag')
+  latent_w = tf.placeholder(tf.float32, shape=[None, num_layers, z_dim], name='latent_w')
   w_enc = E.get_output_for(x, is_training=False)
   w_enc = tf.reshape(w_enc, [-1, 14, 512])
   coef = args.radius / np.sqrt(z_dim / 3.0)
-  if args.attr == 'age':
-    inds = ATTRS.get('age')
-    aug = tf.zeros_like(latent_w)
-    uniform = tf.random.uniform(shape=[args.batch_size, len(ATTRS.get('age')), z_dim], minval=-1.0, maxval=1.0) * coef
-    aug_square = tf.concat([aug[:, :inds[0]], uniform, aug[:, inds[-1]+1:]], axis=1)
-    latent_wp_square = latent_w + flag * aug_square
-  elif args.attr == 'pose':
-    inds = ATTRS.get('pose')
-    aug = tf.zeros_like(latent_w)
-    uniform = tf.random.uniform(shape=[args.batch_size, len(ATTRS.get('pose')), z_dim], minval=-1.0, maxval=1.0) * coef
-    aug_square = tf.concat([aug[:, :inds[0]], uniform, aug[:, inds[-1]+1:]], axis=1)
-    latent_wp_square = latent_w + flag * aug_square
-  elif args.attr == 'male':
-    inds = ATTRS.get('male')
-    aug = tf.zeros_like(latent_w)
-    uniform = tf.random.uniform(shape=[args.batch_size, len(ATTRS.get('male')), z_dim], minval=-1.0, maxval=1.0) * coef
-    aug_square = tf.concat([aug[:, :inds[0]], uniform, aug[:, inds[-1]+1:]], axis=1)
-    latent_wp_square = latent_w + flag * aug_square
-  elif args.attr == 'expression':
-    inds = ATTRS.get('expression')
-    aug = tf.zeros_like(latent_w)
-    uniform = tf.random.uniform(shape=[args.batch_size, len(ATTRS.get('expression')), z_dim], minval=-1.0, maxval=1.0) * coef
-    aug_square = tf.concat([aug[:, :inds[0]], uniform, aug[:, inds[-1]+1:]], axis=1)
-    latent_wp_square = latent_w + flag * aug_square
-  elif args.attr == 'glass':
-    inds = ATTRS.get('glass')
-    aug = tf.zeros_like(latent_w)
-    uniform = tf.random.uniform(shape=[args.batch_size, len(ATTRS.get('glass')), z_dim], minval=-1.0, maxval=1.0) * coef
-    aug_square = tf.concat([aug[:, :inds[0]], uniform, aug[:, inds[-1]+1:]], axis=1)
-    latent_wp_square = latent_w + flag * aug_square
-  else:
-    raise ValueError('no attr supported!!!')
-  x_rec = Gs.components.synthesis.get_output_for(latent_wp_square, randomize_noise=False)
+
+  x_rec = Gs.components.synthesis.get_output_for(latent_w, randomize_noise=False)
   # Load image list.
   logger.info(f'Loading image list.')
   image_list = []
@@ -129,21 +101,37 @@ def main():
   images = np.asarray(images)
   logger.info(f'images shape {images.shape}')
   images = images.astype(np.float32) / 255 * 2.0 - 1.0
+  aug = np.zeros([args.batch_size, num_layers, z_dim])
   for idx in range(images.shape[0]):
     imgs = images[idx:idx+1]
     w_enc_ = sess.run(w_enc, {x: imgs})
-    w_enc_ = np.tile(w_enc_, [args.batch_size, 1, 1])
-    x_rec_ = sess.run(x_rec, {latent_w: w_enc_, flag: 0})
+    x_rec_ = sess.run(x_rec, {latent_w: w_enc_})
     imgs_ = adjust_pixel_range(x_rec_)
-    for ii in range(2):
-      save_image(f'{output_dir}/{names[idx]}_enc_{ii:04d}.png', imgs_[ii])
-    for i in range(10):
-      x_rec_ = sess.run(x_rec, {latent_w: w_enc_, flag: 1})
+    if args.save_raw:
+      save_image(f'{output_dir}/{names[idx]}_enc_init.png', imgs_[0])
+    w_enc_ = np.tile(w_enc_, [args.batch_size, 1, 1])
+    images_npy = []
+    latent_w_s = []
+    for it in tqdm(range(0, args.total_nums, args.batch_size)):
+      num_layer_replace = np.random.randint(low=1, high=args.max_num_layers)
+      start_layer_replace = np.random.randint(low=0, high=args.max_num_layers - num_layer_replace)
+      end_layer_replace = start_layer_replace + num_layer_replace
+      uniform = np.random.uniform(low=-1.0, high=1.0, size=[args.batch_size, num_layer_replace, z_dim]) * coef
+      aug_square = np.concatenate([aug[:, :start_layer_replace], uniform, aug[:, end_layer_replace:]], axis=1)
+      latent_w_square = w_enc_ + aug_square
+      x_rec_ = sess.run(x_rec, {latent_w: latent_w_square})
       imgs_ = adjust_pixel_range(x_rec_)
-      for ii in range(imgs_.shape[0]):
-        save_image(f'{output_dir}/{names[idx]}_rand_{i*10 +ii:04d}.png', imgs_[ii])
-
-
+      if args.save_raw:
+        for ii in range(imgs_.shape[0]):
+          save_image(f'{output_dir}/{names[idx]}_rand_{it +ii:04d}.png', imgs_[ii])
+      latent_w_s.append(latent_w_square)
+      images_npy.append(imgs_)
+    latent_w_s = np.concatenate(latent_w_s, axis=0)
+    images_npy = np.concatenate(images_npy, axis=0)
+    logger.info(f'latent_w_s shape: {latent_w_s.shape}, Saving...')
+    np.save(f'{output_dir}/{names[idx]}_latent.npy', latent_w_s)
+    logger.info(f'images shape: {images_npy.shape}, Saving...')
+    np.save(f'{output_dir}/{names[idx]}_image.npy', images_npy)
 
 
 if __name__ == '__main__':
