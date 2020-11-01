@@ -118,7 +118,7 @@ def E_loss_nei(E, G, D, perceptual_model, reals, feature_scale=0.00005, D_scale=
     if latent_discriminator is not None:
         fake_latent_score_Uniform = fp32(latent_discriminator.get_output_for(latent_wp_Uniform))
         with tf.variable_scope('dlatent_adv_loss'):
-            dadv_loss = 0.1 * tf.reduce_mean(tf.nn.softplus(-fake_latent_score_Uniform))
+            dadv_loss = -0.1 * tf.reduce_mean(tf.nn.sigmoid(fake_latent_score_Uniform))
             dadv_loss = autosummary('Loss/scores/dadv_loss', dadv_loss)
         loss += dadv_loss
         if return_radius:
@@ -163,9 +163,9 @@ def D_logistic_simplegp_3(E, G, D, reals, r1_gamma=10.0, latent_discriminator=No
         w = G.components.mapping.get_output_for(z, None)
         w_score_out = fp32(latent_discriminator.get_output_for(w))
         fake_latent_score_Uniform = fp32(latent_discriminator.get_output_for(latent_wp_Uniform))
-        loss_w = tf.reduce_mean(tf.nn.softplus(-w_score_out))
+        loss_w = -tf.reduce_mean(tf.nn.sigmoid(w_score_out))
         loss_w = autosummary('Loss/scores/w', loss_w)
-        loss_fake_latent = tf.reduce_mean(tf.nn.softplus(fake_latent_score_Uniform))
+        loss_fake_latent = tf.reduce_mean(tf.nn.sigmoid(fake_latent_score_Uniform))
         loss_fake_latent = autosummary('Loss/scores/w_fake', loss_fake_latent)
         loss += loss_w
         loss += loss_fake_latent

@@ -116,10 +116,12 @@ def training_loop(
             network_pkl = misc.locate_network_pkl(resume_run_id, resume_snapshot)
             print('Loading networks from "%s"...' % network_pkl)
             E, G, D, Gs = misc.load_pkl(network_pkl)
+
             start = int(network_pkl.split('-')[-1].split('.')[0]) // submit_config.batch_size
             start = 0
             max_iters += start
-            ld = tflib.Network('LD_gpu0', func_name='training.networks_encoder5.latent_Discriminator')
+            ld = tflib.Network('LD_gpu0', func_name='training.networks_encoder6.latent_Discriminator')
+            ct = tflib.Network('CT_gpu0', func_name='training.networks_encoder6.coordinate_transform')
             print('Start: ', start)
         else:
             print('Constructing networks...')
@@ -128,6 +130,7 @@ def training_loop(
             E = tflib.Network('E_gpu0', size=submit_config.image_size, filter=filter, filter_max=filter_max,
                               num_layers=num_layers, is_training=True, num_gpus=submit_config.num_gpus, **Encoder_args)
             ld = tflib.Network('LD_gpu0', func_name='training.networks_encoder5.latent_Discriminator')
+            ct = tflib.Network('CT_gpu0', func_name='training.networks_encoder6.coordinate_transform')
             start = 0
 
     E.print_layers(); Gs.print_layers(); D.print_layers(); ld.print_layers()
@@ -232,7 +235,7 @@ def training_loop(
 
             if cur_tick % network_snapshot_ticks == 0:
                 pkl = os.path.join(submit_config.run_dir, 'network-snapshot-%08d.pkl' % (cur_nimg))
-                misc.save_pkl((E, G, D, Gs), pkl)
+                misc.save_pkl((E, G, D, ld, ct, Gs), pkl)
 
     misc.save_pkl((E, G, D, Gs), os.path.join(submit_config.run_dir, 'network-final.pkl'))
     summary_log.close()
