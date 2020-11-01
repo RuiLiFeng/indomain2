@@ -20,6 +20,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f39337b4-eaaa-47c5-8e5a-7b74b0769531" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -29,6 +30,13 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="hiddenUrls">
+      <set>
+        <option value="https://github.com/RuiLiFeng/indomain2.git" />
+      </set>
+    </option>
   </component>
   <component name="JupyterTrust" id="650637e4-853c-4a32-9f78-35a5adeab20f" />
   <component name="ProjectId" id="1jBxlZEtbWk0IFeiUS8rKYuTe15" />
@@ -63,7 +71,19 @@
       <recent name="E:\program\idinvert-master\idinvert-master\training" />
     </key>
   </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SpellCheckerSettings" BundledDictionaries="0" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -88,7 +108,21 @@
       <option name="project" value="LOCAL" />
       <updated>1603291884963</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="refactor sampling.">
+      <created>1604231525301</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1604231525301</updated>
+    </task>
+    <task id="LOCAL-00003" summary="refactor sampling.">
+      <created>1604231546967</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1604231546967</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -99,7 +133,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
@@ -107,21 +143,30 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="minor revison." />
-    <option name="LAST_COMMIT_MESSAGE" value="minor revison." />
+    <MESSAGE value="refactor sampling." />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor sampling." />
   </component>
   <component name="WindowStateProjectService">
-    <state x="604" y="134" key="CommitChangelistDialog2" timestamp="1603291884863">
+    <state x="604" y="134" key="CommitChangelistDialog2" timestamp="1604231546891">
       <screen x="65" y="24" width="1855" height="1056" />
     </state>
-    <state x="604" y="134" key="CommitChangelistDialog2/65.24.1855.1056@65.24.1855.1056" timestamp="1603291884863" />
-    <state x="-998" y="27" key="SettingsEditor" timestamp="1603972367430">
-      <screen x="-1080" y="-240" width="1080" height="1880" />
+    <state x="604" y="134" key="CommitChangelistDialog2/65.24.1855.1056@65.24.1855.1056" timestamp="1604231546891" />
+    <state x="165" y="96" width="1655" height="792" key="DiffContextDialog" timestamp="1604234457466">
+      <screen x="65" y="24" width="1855" height="1056" />
+    </state>
+    <state x="165" y="96" width="1655" height="792" key="DiffContextDialog/65.24.1855.1056@65.24.1855.1056" timestamp="1604234457466" />
+    <state x="486" y="174" key="SettingsEditor" timestamp="1604231487017">
+      <screen x="65" y="24" width="1855" height="1056" />
     </state>
     <state x="-998" y="27" key="SettingsEditor/0.0.1504.963/-1080.-240.1080.1880@-1080.-240.1080.1880" timestamp="1603972367430" />
-    <state x="486" y="174" key="SettingsEditor/65.24.1855.1056@65.24.1855.1056" timestamp="1603291648999" />
-    <state x="592" y="275" key="Vcs.Push.Dialog.v2" timestamp="1603291893644">
+    <state x="486" y="174" key="SettingsEditor/65.24.1855.1056@65.24.1855.1056" timestamp="1604231487017" />
+    <state x="592" y="275" key="Vcs.Push.Dialog.v2" timestamp="1604234483457">
       <screen x="65" y="24" width="1855" height="1056" />
     </state>
-    <state x="592" y="275" key="Vcs.Push.Dialog.v2/65.24.1855.1056@65.24.1855.1056" timestamp="1603291893644" />
+    <state x="592" y="275" key="Vcs.Push.Dialog.v2/65.24.1855.1056@65.24.1855.1056" timestamp="1604234483457" />
+    <state x="670" y="332" key="git4idea.merge.GitPullDialog" timestamp="1604234396054">
+      <screen x="65" y="24" width="1855" height="1056" />
+    </state>
+    <state x="670" y="332" key="git4idea.merge.GitPullDialog/65.24.1855.1056@65.24.1855.1056" timestamp="1604234396054" />
   </component>
 </project>
