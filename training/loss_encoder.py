@@ -166,7 +166,7 @@ def D_logistic_simplegp_3(E, G, D, reals, r1_gamma=10.0, latent_discriminator=No
         loss_w = tf.reduce_mean(tf.nn.softplus(-w_score_out))
         loss_w = autosummary('Loss/scores/w', loss_w)
         loss_fake_latent = tf.reduce_mean(tf.nn.softplus(fake_latent_score_Uniform))
-        loss_fake_latent = autosummary('Loss/scores/fake', loss_fake_latent)
+        loss_fake_latent = autosummary('Loss/scores/w_fake', loss_fake_latent)
         loss += loss_w
         loss += loss_fake_latent
     return loss, loss_fake, loss_real, loss_gp
