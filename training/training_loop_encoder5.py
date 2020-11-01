@@ -167,7 +167,7 @@ def training_loop(
                 D_loss_grad += loss_gp
             with tf.control_dependencies([add_global0]):
                 E_opt.register_gradients(E_loss, E_gpu.trainables)
-                D_opt.register_gradients(D_loss, D_gpu.trainables + ld_gpu.trainables)
+                D_opt.register_gradients(D_loss, list(D_gpu.trainables.values()) + list(ld_gpu.trainables.values()))
 
     E_loss_rec /= submit_config.num_gpus
     E_loss_adv /= submit_config.num_gpus
