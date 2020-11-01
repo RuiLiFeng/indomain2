@@ -139,6 +139,7 @@ def training_loop(
 
     E_opt = tflib.Optimizer(name='TrainE', learning_rate=learning_rate, **E_opt_args)
     D_opt = tflib.Optimizer(name='TrainD', learning_rate=learning_rate, **D_opt_args)
+    LD_opt = tflib.Optimizer(name='TrainLD', learning_rate=learning_rate * 0.01, **D_opt_args)
 
     E_loss_rec = 0.
     E_loss_adv = 0.
@@ -169,7 +170,8 @@ def training_loop(
                 D_loss_grad += loss_gp
             with tf.control_dependencies([add_global0]):
                 E_opt.register_gradients(E_loss, E_gpu.trainables)
-                D_opt.register_gradients(D_loss, list(D_gpu.trainables.values()) + list(ld_gpu.trainables.values()))
+                D_opt.register_gradients(D_loss, D_gpu.trainables)
+                LD_opt.register_gradients(D_loss, ld_gpu.trainables)
 
     E_loss_rec /= submit_config.num_gpus
     E_loss_adv /= submit_config.num_gpus
@@ -181,6 +183,7 @@ def training_loop(
 
     E_train_op = E_opt.apply_updates()
     D_train_op = D_opt.apply_updates()
+    LD_train_op = LD_opt.apply_updates()
 
     print('Building testing graph...')
     fake_X_val = test(E, Gs, real_test, submit_config)
@@ -206,7 +209,7 @@ def training_loop(
         batch_images = sess.run(image_batch_train)
         feed_dict = {real_train: batch_images}
         _, recon_, adv_ , radius_ , dadv_ = sess.run([E_train_op, E_loss_rec, E_loss_adv, E_radius, E_loss_dadv], feed_dict)
-        _, d_r_, d_f_, d_g_ = sess.run([D_train_op, D_loss_real, D_loss_fake, D_loss_grad], feed_dict)
+        _, _, d_r_, d_f_, d_g_ = sess.run([D_train_op, LD_train_op, D_loss_real, D_loss_fake, D_loss_grad], feed_dict)
 
         cur_nimg += submit_config.batch_size
 
