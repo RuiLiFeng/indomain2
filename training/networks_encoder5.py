@@ -379,7 +379,6 @@ def latent_Discriminator(
                 x = dense(x, fmaps=filters, gain=np.sqrt(2), use_wscale=True)
                 x = apply_bias(x)
                 x = leaky_relu(x)
-                x = sync_batch_norm(x)
         with tf.variable_scope('final_dense'):
             score_out = dense(x, fmaps=1, gain=np.sqrt(2), use_wscale=True)
             score_out = apply_bias(score_out)
