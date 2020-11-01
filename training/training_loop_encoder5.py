@@ -155,13 +155,13 @@ def training_loop(
             perceptual_model = PerceptualModel(img_size=[E_loss_args.perceptual_img_size, E_loss_args.perceptual_img_size], multi_layers=False)
             real_gpu = process_reals(real_split[gpu], mirror_augment, drange_data, drange_net)
             with tf.name_scope('E_loss'), tf.control_dependencies(None):
-                E_loss, recon_loss, adv_loss, dadv_loss, radius = dnnlib.util.call_func_by_name(E=E_gpu, G=G_gpu, D=D_gpu, perceptual_model=perceptual_model, reals=real_gpu, return_radius=True, latent_discriminator=ld, **E_loss_args)
+                E_loss, recon_loss, adv_loss, dadv_loss, radius = dnnlib.util.call_func_by_name(E=E_gpu, G=G_gpu, D=D_gpu, perceptual_model=perceptual_model, reals=real_gpu, return_radius=True, latent_discriminator=ld_gpu, **E_loss_args)
                 E_loss_rec += recon_loss
                 E_loss_adv += adv_loss
                 E_radius += radius
                 E_loss_dadv += dadv_loss
             with tf.name_scope('D_loss'), tf.control_dependencies(None):
-                D_loss, loss_fake, loss_real, loss_gp = dnnlib.util.call_func_by_name(E=E_gpu, G=G_gpu, D=D_gpu, reals=real_gpu, latent_discriminator=ld, **D_loss_args)
+                D_loss, loss_fake, loss_real, loss_gp = dnnlib.util.call_func_by_name(E=E_gpu, G=G_gpu, D=D_gpu, reals=real_gpu, latent_discriminator=ld_gpu, **D_loss_args)
                 D_loss_real += loss_real
                 D_loss_fake += loss_fake
                 D_loss_grad += loss_gp
