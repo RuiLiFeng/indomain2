@@ -159,7 +159,7 @@ def D_logistic_simplegp_3(E, G, D, reals, r1_gamma=10.0, latent_discriminator=No
         loss_gp = r1_penalty * (r1_gamma * 0.5)
     loss = loss_fake + loss_real + loss_gp
     if latent_discriminator is not None:
-        z = tf.random.normal([reals.shape[0], latent_dim])
+        z = tf.random.normal([reals.shape[0].value, latent_dim])
         w = G.components.mapping.get_output_for(z, None)
         w_score_out = fp32(latent_discriminator.get_output_for(w))
         fake_latent_score_Uniform = fp32(latent_discriminator.get_output_for(latent_wp_Uniform))

@@ -35,7 +35,8 @@ def main(hps):
     sess = tensorflow_session()
 
     data_dir = ''
-    sub_dir = ['/gdata2/fengrl/inverted/indomain-500/',
+    sub_dir = ['/gdata2/fengrl/inverted/indomain-r0.5-500/',
+               '/gdata2/fengrl/inverted/indomain-500/',
                '/gdata2/fengrl/inverted/indomain2-proj-500/',
                '/gdata2/fengrl/inverted/indomain2-500/',
                '/gdata2/fengrl/inverted/indomain2-r2-500/',
