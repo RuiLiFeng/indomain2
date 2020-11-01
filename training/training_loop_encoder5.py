@@ -153,7 +153,7 @@ def training_loop(
             E_gpu = E if gpu == 0 else E.clone(E.name[:-1] + str(gpu))
             D_gpu = D if gpu == 0 else D.clone(D.name + '_shadow')
             G_gpu = Gs if gpu == 0 else Gs.clone(Gs.name + '_shadow')
-            ld_gpu = ld if gpu == 0 else ld.clone(ld.name + '_shadow')
+            ld_gpu = ld if gpu == 0 else ld.clone(ld.name[:-1] + str(gpu))
             perceptual_model = PerceptualModel(img_size=[E_loss_args.perceptual_img_size, E_loss_args.perceptual_img_size], multi_layers=False)
             real_gpu = process_reals(real_split[gpu], mirror_augment, drange_data, drange_net)
             with tf.name_scope('E_loss'), tf.control_dependencies(None):

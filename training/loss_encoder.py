@@ -111,7 +111,6 @@ def E_loss_nei(E, G, D, perceptual_model, reals, feature_scale=0.00005, D_scale=
 
     with tf.variable_scope('adv_loss'):
         D_scale = autosummary('Loss/scores/d_scale', D_scale)
-        print(D_scale)
         adv_loss = D_scale * tf.reduce_mean(tf.nn.softplus(-fake_scores_out_Uniform))
         adv_loss = autosummary('Loss/scores/adv_loss', adv_loss)
 
