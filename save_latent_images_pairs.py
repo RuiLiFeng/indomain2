@@ -10,13 +10,11 @@ code.
 import os
 import argparse
 import pickle
-# from tqdm import tqdm
 from training.misc import progress as tqdm
 import numpy as np
 import tensorflow as tf
 from dnnlib import tflib
 
-from perceptual_model import PerceptualModel
 from utils.logger import setup_logger
 from utils.visualizer import adjust_pixel_range
 from utils.visualizer import HtmlPageVisualizer

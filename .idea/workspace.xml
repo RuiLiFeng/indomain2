@@ -19,9 +19,7 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f39337b4-eaaa-47c5-8e5a-7b74b0769531" name="Default Changelist" comment="handle conflicts..">
-      <change beforePath="$PROJECT_DIR$/.idea/idinvert-master.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/idinvert-master.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="f39337b4-eaaa-47c5-8e5a-7b74b0769531" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/save_latent_images_pairs.py" beforeDir="false" afterPath="$PROJECT_DIR$/save_latent_images_pairs.py" afterDir="false" />
     </list>
@@ -103,7 +101,14 @@
       <option name="project" value="LOCAL" />
       <updated>1603291884963</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="refactor sampling.">
+      <created>1604231525301</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1604231525301</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -124,13 +129,14 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="minor revison." />
-    <option name="LAST_COMMIT_MESSAGE" value="minor revison." />
+    <MESSAGE value="refactor sampling." />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor sampling." />
   </component>
   <component name="WindowStateProjectService">
-    <state x="604" y="134" key="CommitChangelistDialog2" timestamp="1603291884863">
+    <state x="604" y="134" key="CommitChangelistDialog2" timestamp="1604231525221">
       <screen x="65" y="24" width="1855" height="1056" />
     </state>
-    <state x="604" y="134" key="CommitChangelistDialog2/65.24.1855.1056@65.24.1855.1056" timestamp="1603291884863" />
+    <state x="604" y="134" key="CommitChangelistDialog2/65.24.1855.1056@65.24.1855.1056" timestamp="1604231525221" />
     <state x="486" y="174" key="SettingsEditor" timestamp="1604231487017">
       <screen x="65" y="24" width="1855" height="1056" />
     </state>
