@@ -232,7 +232,7 @@ def training_loop(
 
             if cur_tick % network_snapshot_ticks == 0:
                 pkl = os.path.join(submit_config.run_dir, 'network-snapshot-%08d.pkl' % (cur_nimg))
-                misc.save_pkl((E, G, D, Gs), pkl)
+                misc.save_pkl((E, G, D, ld, Gs), pkl)
 
     misc.save_pkl((E, G, D, Gs), os.path.join(submit_config.run_dir, 'network-final.pkl'))
     summary_log.close()
