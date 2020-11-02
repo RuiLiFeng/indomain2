@@ -69,6 +69,7 @@ def parse_args():
                       help='Decide which direction to optimize')
   parser.add_argument('--num_images', type=int, default=10)
   parser.add_argument('--model_name', type=str, default='ffhq')
+  parser.add_argument('--attr_name', type=str, default='expression')
   return parser.parse_args()
 
 
@@ -80,6 +81,11 @@ def main():
   image_list_name = os.path.splitext(os.path.basename(args.image_list))[0]
   output_dir = args.output_dir or f'results/inversion/{image_list_name}'
   logger = setup_logger(output_dir, 'inversion.log', 'inversion_logger')
+  ATTRS = {'age': [0, 1, 2, 3, 4],
+           'pose': [0, 1, 2],
+           'male': [2, 3, 4],
+           'expression': [2, 3, 4, 5],
+           'glass': [0, 1, 2]}
 
   logger.info(f'Loading model.')
   tflib.init_tf({'rnd.np_random_seed': 1000})
@@ -93,16 +99,30 @@ def main():
   assert image_size == E.input_shape[3]
   input_shape = E.input_shape
   perceptual_model = PerceptualModel([image_size, image_size], False)
-
+  num_layers, z_dim = Gs.components.synthesis.input_shape[1:3]
   # Build graph.
   logger.info(f'Building graph.')
   sess = tf.get_default_session()
   x = tf.placeholder(tf.float32, shape=input_shape, name='real_image')
   w_enc = E.get_output_for(x, is_training=False)
-  w_enc = tf.reshape(w_enc, [-1, 14, 512])
-  wp = tf.get_variable(shape=[1, 14, 512], name='latent_code')
+  w_enc = tf.reshape(w_enc, [-1, num_layers, z_dim])
+  attr_related_layers = ATTRS.get(args.attr_name, [0, 1, 2])
+  wps = []
+  for i in range(num_layers):
+    if i in attr_related_layers:
+      trainable = True
+    else:
+      trainable = False
+    latent_code = tf.get_variable(shape=[1, 1, z_dim], name=f'latent_code{i}', trainable=trainable)
+    wps.append(latent_code)
+  wp = tf.concat(wps, axis=1)
+
   x_rec = Gs.components.synthesis.get_output_for(wp, randomize_noise=False)
-  setter = tf.assign(wp, w_enc)
+  setter_ops = []
+  for i in range(num_layers):
+    setter_ops.append(tf.assign(wps[i], w_enc[:, i:i+1]))
+  setter = tf.group(setter_ops)
+  code_to_optim = [v for v in tf.trainable_variables() if v.name.startswith("latent_code")]
   x_255 = (tf.transpose(x, [0, 2, 3, 1]) + 1) / 2 * 255
   x_rec_255 = (tf.transpose(x_rec, [0, 2, 3, 1]) + 1) / 2 * 255
   x_feat = perceptual_model(x_255)
@@ -123,7 +143,7 @@ def main():
   loss_adv = args.d_scale * loss_adv
   loss = loss_feat + loss_pixel + scores + loss_adv
   optimizer = tf.train.AdamOptimizer(learning_rate=args.learning_rate)
-  train_op = optimizer.minimize(loss, var_list=[wp])
+  train_op = optimizer.minimize(loss, var_list=code_to_optim)
   tflib.init_uninitialized_vars()
 
   # Load image list.
