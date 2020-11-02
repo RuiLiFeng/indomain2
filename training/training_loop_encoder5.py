@@ -139,7 +139,7 @@ def training_loop(
 
     E_opt = tflib.Optimizer(name='TrainE', learning_rate=learning_rate, **E_opt_args)
     D_opt = tflib.Optimizer(name='TrainD', learning_rate=learning_rate, **D_opt_args)
-    LD_opt = tflib.Optimizer(name='TrainLD', learning_rate=learning_rate * 0.0001, **D_opt_args)
+    LD_opt = tflib.Optimizer(name='TrainLD', learning_rate=learning_rate, **D_opt_args)
 
     E_loss_rec = 0.
     E_loss_adv = 0.
