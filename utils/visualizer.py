@@ -514,6 +514,7 @@ class HtmlPageVisualizer(object):
       for j in range(self.num_cols):
         text = self.cells[i][j]['text']
         image = self.cells[i][j]['image']
+        print(text)
         if text:
           html += f'  <td>{text}<br><br>{image}</td>\n'
         else:
