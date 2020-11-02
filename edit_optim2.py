@@ -141,8 +141,8 @@ def main():
     x_rec_ = sess.run(x_rec)
     imgs_ = adjust_pixel_range(x_rec_)
     visualizer.set_cell(idx, 0, text=names[idx])
-    visualizer.set_cell(idx, 1, imgs[0])
-    visualizer.set_cell(idx, 2, imgs_[0])
+    visualizer.set_cell(idx, 1, image=imgs[0])
+    visualizer.set_cell(idx, 2, image=imgs_[0])
     if args.save_raw:
       save_image(f'{output_dir}/{names[idx]}_enc_init.png', imgs_[0])
     col_idx = 3
