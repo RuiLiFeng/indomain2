@@ -62,7 +62,7 @@ def parse_args():
   parser.add_argument('--learning_rate', type=float, default=0.001,
                       help='Learning rate for optimization. (default: 0.01)')
   parser.add_argument('--reverse', action='store_true',
-                      help='')
+                      help='Decide which direction to optimize')
   return parser.parse_args()
 
 
