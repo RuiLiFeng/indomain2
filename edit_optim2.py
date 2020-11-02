@@ -105,7 +105,8 @@ def main():
     scores = classifier.get_output_for(x_rec, None)
   loss = loss_feat + scores
   optimizer = tf.train.AdamOptimizer(learning_rate=args.learning_rate)
-  train_op = optimizer.minimize(loss, var_list=[wp[:,0:3,:]])
+  wp_layer = wp[:, 0:3, :]
+  train_op = optimizer.minimize(loss, var_list=[wp_layer])
   tflib.init_uninitialized_vars()
 
   # Load image list.
