@@ -116,10 +116,12 @@ def training_loop(
             network_pkl = misc.locate_network_pkl(resume_run_id, resume_snapshot)
             print('Loading networks from "%s"...' % network_pkl)
             E, G, D, Gs = misc.load_pkl(network_pkl)
+
             start = int(network_pkl.split('-')[-1].split('.')[0]) // submit_config.batch_size
             start = 0
             max_iters += start
-            ld = tflib.Network('LD_gpu0', func_name='training.networks_encoder5.latent_Discriminator')
+            ld = tflib.Network('LD_gpu0', func_name='training.networks_encoder6.latent_Discriminator')
+            ct = tflib.Network('CT_gpu0', func_name='training.networks_encoder6.coordinate_transform')
             print('Start: ', start)
         else:
             print('Constructing networks...')
@@ -128,6 +130,7 @@ def training_loop(
             E = tflib.Network('E_gpu0', size=submit_config.image_size, filter=filter, filter_max=filter_max,
                               num_layers=num_layers, is_training=True, num_gpus=submit_config.num_gpus, **Encoder_args)
             ld = tflib.Network('LD_gpu0', func_name='training.networks_encoder5.latent_Discriminator')
+            ct = tflib.Network('CT_gpu0', func_name='training.networks_encoder6.coordinate_transform')
             start = 0
 
     E.print_layers(); Gs.print_layers(); D.print_layers(); ld.print_layers()
@@ -139,7 +142,6 @@ def training_loop(
 
     E_opt = tflib.Optimizer(name='TrainE', learning_rate=learning_rate, **E_opt_args)
     D_opt = tflib.Optimizer(name='TrainD', learning_rate=learning_rate, **D_opt_args)
-    LD_opt = tflib.Optimizer(name='TrainLD', learning_rate=learning_rate * 0.0001, **D_opt_args)
 
     E_loss_rec = 0.
     E_loss_adv = 0.
@@ -154,7 +156,7 @@ def training_loop(
             E_gpu = E if gpu == 0 else E.clone(E.name[:-1] + str(gpu))
             D_gpu = D if gpu == 0 else D.clone(D.name + '_shadow')
             G_gpu = Gs if gpu == 0 else Gs.clone(Gs.name + '_shadow')
-            ld_gpu = ld if gpu == 0 else ld.clone(ld.name[:-1] + str(gpu))
+            ld_gpu = ld if gpu == 0 else ld.clone(ld.name + '_shadow')
             perceptual_model = PerceptualModel(img_size=[E_loss_args.perceptual_img_size, E_loss_args.perceptual_img_size], multi_layers=False)
             real_gpu = process_reals(real_split[gpu], mirror_augment, drange_data, drange_net)
             with tf.name_scope('E_loss'), tf.control_dependencies(None):
@@ -170,8 +172,7 @@ def training_loop(
                 D_loss_grad += loss_gp
             with tf.control_dependencies([add_global0]):
                 E_opt.register_gradients(E_loss, E_gpu.trainables)
-                D_opt.register_gradients(D_loss, D_gpu.trainables)
-                LD_opt.register_gradients(D_loss, ld_gpu.trainables)
+                D_opt.register_gradients(D_loss, list(D_gpu.trainables.values()) + list(ld_gpu.trainables.values()))
 
     E_loss_rec /= submit_config.num_gpus
     E_loss_adv /= submit_config.num_gpus
@@ -183,7 +184,6 @@ def training_loop(
 
     E_train_op = E_opt.apply_updates()
     D_train_op = D_opt.apply_updates()
-    LD_train_op = LD_opt.apply_updates()
 
     print('Building testing graph...')
     fake_X_val = test(E, Gs, real_test, submit_config)
@@ -208,9 +208,9 @@ def training_loop(
 
         batch_images = sess.run(image_batch_train)
         feed_dict = {real_train: batch_images}
-        e_loss_, _, recon_, adv_ , radius_ , dadv_ = sess.run([E_loss, E_train_op, E_loss_rec, E_loss_adv, E_radius, E_loss_dadv], feed_dict)
-        d_loss_, _, _, d_r_, d_f_, d_g_ = sess.run([D_loss, D_train_op, LD_train_op, D_loss_real, D_loss_fake, D_loss_grad], feed_dict)
-        print(e_loss_, d_loss_, dadv_)
+        _, recon_, adv_ , radius_ , dadv_ = sess.run([E_train_op, E_loss_rec, E_loss_adv, E_radius, E_loss_dadv], feed_dict)
+        _, d_r_, d_f_, d_g_ = sess.run([D_train_op, D_loss_real, D_loss_fake, D_loss_grad], feed_dict)
+
         cur_nimg += submit_config.batch_size
 
         if it % 50 == 0:
@@ -235,7 +235,7 @@ def training_loop(
 
             if cur_tick % network_snapshot_ticks == 0:
                 pkl = os.path.join(submit_config.run_dir, 'network-snapshot-%08d.pkl' % (cur_nimg))
-                misc.save_pkl((E, G, D, ld, Gs), pkl)
+                misc.save_pkl((E, G, D, ld, ct, Gs), pkl)
 
     misc.save_pkl((E, G, D, Gs), os.path.join(submit_config.run_dir, 'network-final.pkl'))
     summary_log.close()

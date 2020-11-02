@@ -377,10 +377,30 @@ def latent_Discriminator(
         for step in range(layers):
             with tf.variable_scope('Dense%d' % step):
                 x = dense(x, fmaps=filters, gain=np.sqrt(2), use_wscale=True)
-                x = apply_bias(x)
                 x = leaky_relu(x)
         with tf.variable_scope('final_dense'):
             score_out = dense(x, fmaps=1, gain=np.sqrt(2), use_wscale=True)
-            score_out = apply_bias(score_out)
         score_out = tf.identity(score_out, name='Score_out')
     return score_out
+
+
+def coordinate_transform(
+        dlatent,
+        latent_size          = 512,
+        num_layers           = 14,
+        layers               = 8,
+        filters              = 512,
+        **kwargs
+):
+    dlatent.set_shape([None, num_layers, latent_size])
+    with tf.variable_scope('coordinate_transform'):
+        x = dlatent
+        for step in range(layers):
+            with tf.variable_scope('Dense%d' % step):
+                x = dense(x, fmaps=filters, gain=np.sqrt(2), use_wscale=True)
+                x = leaky_relu(x)
+        with tf.variable_scope('final_dense'):
+            dlatent_out = dense(x, fmaps=latent_size * num_layers, gain=np.sqrt(2), use_wscale=True)
+            dlatent_out = tf.reshape(dlatent_out, [-1, num_layers, latent_size])
+        dlatent_out = tf.identity(dlatent_out, name='dlatent_out')
+    return dlatent_out
