@@ -99,11 +99,12 @@ def main():
   x_rec_feat = perceptual_model(x_rec_255)
   loss_feat = tf.reduce_mean(tf.square(x_feat - x_rec_feat), axis=[1])
   loss_feat = args.loss_weight_feat * loss_feat
+  loss_pixel = tf.reduce_mean(tf.square(x_rec - x), axis=[1,2,3])
   if args.reverse:
     scores = -classifier.get_output_for(x_rec, None)
   else:
     scores = classifier.get_output_for(x_rec, None)
-  loss = loss_feat + scores
+  loss = loss_feat + scores + loss_pixel
   optimizer = tf.train.AdamOptimizer(learning_rate=args.learning_rate)
   train_op = optimizer.minimize(loss, var_list=[wp[:,0:3,:]])
   tflib.init_uninitialized_vars()
