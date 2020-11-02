@@ -48,7 +48,7 @@
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../idinvert_pytorch" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -150,7 +150,14 @@
       <option name="project" value="LOCAL" />
       <updated>1604287427888</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="support html.">
+      <created>1604288145295</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1604288145295</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -175,29 +182,34 @@
     <MESSAGE value="fix .gitignore" />
     <MESSAGE value="support edit using optimization." />
     <MESSAGE value="minor revision" />
-    <option name="LAST_COMMIT_MESSAGE" value="minor revision" />
+    <MESSAGE value="support html." />
+    <option name="LAST_COMMIT_MESSAGE" value="support html." />
   </component>
   <component name="WindowStateProjectService">
-    <state x="604" y="134" key="CommitChangelistDialog2" timestamp="1604287427810">
+    <state x="604" y="134" key="CommitChangelistDialog2" timestamp="1604288145249">
       <screen x="65" y="24" width="1855" height="1056" />
     </state>
-    <state x="604" y="134" key="CommitChangelistDialog2/65.24.1855.1056@65.24.1855.1056" timestamp="1604287427810" />
+    <state x="604" y="134" key="CommitChangelistDialog2/65.24.1855.1056@65.24.1855.1056" timestamp="1604288145249" />
     <state x="165" y="96" width="1655" height="792" key="DiffContextDialog" timestamp="1604234457466">
       <screen x="65" y="24" width="1855" height="1056" />
     </state>
     <state x="165" y="96" width="1655" height="792" key="DiffContextDialog/65.24.1855.1056@65.24.1855.1056" timestamp="1604234457466" />
+    <state x="780" y="297" key="FileChooserDialogImpl" timestamp="1604295339449">
+      <screen x="65" y="24" width="1855" height="1056" />
+    </state>
+    <state x="780" y="297" key="FileChooserDialogImpl/65.24.1855.1056@65.24.1855.1056" timestamp="1604295339449" />
     <state x="486" y="174" key="SettingsEditor" timestamp="1604231487017">
       <screen x="65" y="24" width="1855" height="1056" />
     </state>
     <state x="-998" y="27" key="SettingsEditor/0.0.1504.963/-1080.-240.1080.1880@-1080.-240.1080.1880" timestamp="1603972367430" />
     <state x="486" y="174" key="SettingsEditor/65.24.1855.1056@65.24.1855.1056" timestamp="1604231487017" />
-    <state x="592" y="275" key="Vcs.Push.Dialog.v2" timestamp="1604287432117">
+    <state x="592" y="275" key="Vcs.Push.Dialog.v2" timestamp="1604288152154">
       <screen x="65" y="24" width="1855" height="1056" />
     </state>
-    <state x="592" y="275" key="Vcs.Push.Dialog.v2/65.24.1855.1056@65.24.1855.1056" timestamp="1604287432117" />
-    <state x="670" y="332" key="git4idea.merge.GitPullDialog" timestamp="1604287273923">
+    <state x="592" y="275" key="Vcs.Push.Dialog.v2/65.24.1855.1056@65.24.1855.1056" timestamp="1604288152154" />
+    <state x="670" y="332" key="git4idea.merge.GitPullDialog" timestamp="1604292155473">
       <screen x="65" y="24" width="1855" height="1056" />
     </state>
-    <state x="670" y="332" key="git4idea.merge.GitPullDialog/65.24.1855.1056@65.24.1855.1056" timestamp="1604287273923" />
+    <state x="670" y="332" key="git4idea.merge.GitPullDialog/65.24.1855.1056@65.24.1855.1056" timestamp="1604292155473" />
   </component>
 </project>

@@ -36,8 +36,8 @@ def parse_args():
                       help='Directory to save the results. If not specified, '
                            '`./results/inversion/${IMAGE_LIST}` '
                            'will be used by default.')
-  parser.add_argument('--batch_size', type=int, default=50,
-                      help='Batch size. (default: 32)')
+  parser.add_argument('--batch_size', type=int, default=4,
+                      help='Batch size. (default: 4)')
   parser.add_argument('--viz_size', type=int, default=256,
                       help='Image size for visualization. (default: 256)')
   parser.add_argument('--gpu_id', type=str, default='0',
@@ -48,11 +48,17 @@ def parse_args():
                       help='decide end with which images')
   parser.add_argument('--save_raw', action='store_true',
                       help='Whether to save raw images')
-  parser.add_argument('--num_iterations', type=int, default=100,
-                      help='Number of optimization iterations. (default: 100)')
+  parser.add_argument('--num_iterations', type=int, default=50,
+                      help='Number of optimization iterations. (default: 50)')
   parser.add_argument('--loss_weight_feat', type=float, default=1e-3,
                       help='The perceptual loss scale for optimization. '
                            '(default: 1e-5)')
+  parser.add_argument('--loss_weight_pixel', type=float, default=10,
+                      help='The pixel loss scale for optimization. '
+                           '(default: 10)')
+  parser.add_argument('--d_scale', type=float, default=0.1,
+                      help='The discriminator loss scale for optimization. '
+                           '(default: 0.1)')
   parser.add_argument('--learning_rate', type=float, default=0.001,
                       help='Learning rate for optimization. (default: 0.01)')
   parser.add_argument('--reverse', action='store_true',
@@ -75,7 +81,7 @@ def main():
   tflib.init_tf({'rnd.np_random_seed': 1000})
   assert os.path.exists(args.model_path1)
   assert os.path.exists(args.model_path2)
-  E, _, _, Gs = misc.load_pkl(args.model_path1)
+  E, _, D, Gs = misc.load_pkl(args.model_path1)
   classifier = misc.load_pkl(args.model_path2)
 
   # Get input size.
@@ -97,16 +103,21 @@ def main():
   x_rec_255 = (tf.transpose(x_rec, [0, 2, 3, 1]) + 1) / 2 * 255
   x_feat = perceptual_model(x_255)
   x_rec_feat = perceptual_model(x_rec_255)
-  loss_feat = tf.reduce_mean(tf.square(x_feat - x_rec_feat), axis=[1])
+  loss_feat = tf.reduce_mean(tf.square(x_feat - x_rec_feat), axis=1)
   loss_feat = args.loss_weight_feat * loss_feat
-  loss_pixel = tf.reduce_mean(tf.square(x_rec - x), axis=[1,2,3])
+  loss_pixel = tf.reduce_mean(tf.square(x_rec - x), axis=[1, 2, 3])
+  loss_pixel = args.loss_weight_pixel * loss_pixel
   if args.reverse:
     scores = -classifier.get_output_for(x_rec, None)
   else:
     scores = classifier.get_output_for(x_rec, None)
-  loss = loss_feat + scores + loss_pixel
+  scores = tf.reduce_mean(scores, axis=1)
+  adv_score = D.get_output_for(x_rec, None)
+  loss_adv = tf.reduce_mean(tf.nn.softplus(-adv_score), axis=1)
+  loss_adv = args.d_scale * loss_adv
+  loss = loss_feat + loss_pixel + scores + loss_adv
   optimizer = tf.train.AdamOptimizer(learning_rate=args.learning_rate)
-  train_op = optimizer.minimize(loss, var_list=[wp[:,0:3,:]])
+  train_op = optimizer.minimize(loss, var_list=[wp])
   tflib.init_uninitialized_vars()
 
   # Load image list.
@@ -140,24 +151,27 @@ def main():
     imgs = images[idx:idx+1]
     sess.run(setter, {x: imgs})
     x_rec_ = sess.run(x_rec)
-    imgs_ = adjust_pixel_range(x_rec_)
+    imgs_ori = adjust_pixel_range(imgs)
+    imgs_ini = adjust_pixel_range(x_rec_)
     visualizer.set_cell(idx, 0, text=names[idx])
-    visualizer.set_cell(idx, 1, imgs[0])
-    visualizer.set_cell(idx, 2, imgs_[0])
+    visualizer.set_cell(idx, 1, image=imgs_ori[0])
+    visualizer.set_cell(idx, 2, image=imgs_ini[0])
     if args.save_raw:
-      save_image(f'{output_dir}/{names[idx]}_enc_init.png', imgs_[0])
+      save_image(f'{output_dir}/{names[idx]}_enc_init.png', imgs_ini[0])
     col_idx = 3
-    for it in tqdm(range(1, args.num_iterations + 1)):
-      _, loss_, feat_loss_, scores_ = sess.run([train_op, loss, loss_feat, scores], {x:imgs})
+    for it in range(1, args.num_iterations + 1):
+      output_node = [train_op, loss, loss_feat, scores, loss_pixel, loss_adv]
+      _, loss_, feat_loss_, scores_, loss_pixel_, loss_adv_ = sess.run(output_node, {x: imgs})
       if it % save_interval == 0:
         x_rec_ = sess.run(x_rec)
         imgs_ = adjust_pixel_range(x_rec_)
         visualizer.set_cell(idx, col_idx, image=imgs_[0])
         col_idx += 1
-        print(f'Iter: {it:04d} loss: {loss_} feat_loss: {feat_loss_} score: {scores_}')
-      if args.save_raw:
-        for ii in range(imgs_.shape[0]):
-          save_image(f'{output_dir}/{names[idx]}_edit_{it +ii:04d}.png', imgs_[ii])
+        print(f'Iter: {it:04d} loss: {np.mean(loss_):.4f} feat_loss: {np.mean(feat_loss_):.4f}'
+              f' pixel_loss: {np.mean(loss_pixel_):.4f} score: {np.mean(scores_):.4f} adv: {np.mean(loss_adv_):.4f}')
+        if args.save_raw:
+          for ii in range(imgs_.shape[0]):
+            save_image(f'{output_dir}/{names[idx]}_edit_{it +ii:04d}.png', imgs_[ii])
   visualizer.save(f'{output_dir}/{args.model_name}_inversion.html')
 
 if __name__ == '__main__':
