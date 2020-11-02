@@ -92,7 +92,6 @@ def main():
   logger.info(f'Building graph.')
   sess = tf.get_default_session()
   x = tf.placeholder(tf.float32, shape=input_shape, name='real_image')
-  # latent_w = tf.placeholder(tf.float32, shape=[None, num_layers, z_dim], name='latent_w')
   w_enc = E.get_output_for(x, is_training=False)
   w_enc = tf.reshape(w_enc, [-1, 14, 512])
   wp = tf.get_variable(shape=[1, 14, 512], name='latent_code')
