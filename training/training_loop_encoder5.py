@@ -164,14 +164,14 @@ def training_loop(
                 E_radius += radius
                 E_loss_dadv += dadv_loss
             with tf.name_scope('D_loss'), tf.control_dependencies(None):
-                D_loss, loss_fake, loss_real, loss_gp = dnnlib.util.call_func_by_name(E=E_gpu, G=G_gpu, D=D_gpu, reals=real_gpu, latent_discriminator=ld_gpu, **D_loss_args)
+                D_loss, loss_fake, loss_real, loss_gp, loss_ld = dnnlib.util.call_func_by_name(E=E_gpu, G=G_gpu, D=D_gpu, reals=real_gpu, latent_discriminator=ld_gpu, **D_loss_args)
                 D_loss_real += loss_real
                 D_loss_fake += loss_fake
                 D_loss_grad += loss_gp
             with tf.control_dependencies([add_global0]):
                 E_opt.register_gradients(E_loss, E_gpu.trainables)
                 D_opt.register_gradients(D_loss, D_gpu.trainables)
-                LD_opt.register_gradients(D_loss, ld_gpu.trainables)
+                LD_opt.register_gradients(loss_ld, ld_gpu.trainables)
 
     E_loss_rec /= submit_config.num_gpus
     E_loss_adv /= submit_config.num_gpus

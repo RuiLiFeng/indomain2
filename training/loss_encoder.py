@@ -169,10 +169,11 @@ def D_logistic_simplegp_3(E, G, D, reals, r1_gamma=10.0, latent_discriminator=No
         loss_w = autosummary('Loss/scores/w', loss_w)
         loss_fake_latent = tf.reduce_mean(tf.nn.softplus(fake_latent_score_Uniform))
         loss_fake_latent = autosummary('Loss/scores/w_fake', loss_fake_latent)
-        loss = loss_fake + loss_real + loss_gp + loss_w + loss_fake_latent
+        loss_ld = loss_fake_latent + loss_w
         # w_grads = fp32(tf.gradients(w_score_out, [w])[0])
         # w_r1_p = tf.reduce_mean(tf.reduce_sum(tf.square(w_grads), axis=[1, 2]))
         # w_r1_p = autosummary('Loss/wr1p', w_r1_p)
         # loss_gwp = r1_gamma * 0.5 * 0.1 * w_r1_p
         # loss += loss_gwp
+        return loss, loss_fake, loss_real, loss_gp, loss_ld
     return loss, loss_fake, loss_real, loss_gp
