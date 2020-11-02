@@ -52,10 +52,10 @@ def parse_args():
                       help='Number of optimization iterations. (default: 50)')
   parser.add_argument('--loss_weight_feat', type=float, default=1e-3,
                       help='The perceptual loss scale for optimization. '
-                           '(default: 1e-5)')
-  parser.add_argument('--loss_weight_pixel', type=float, default=10,
+                           '(default: 1e-3)')
+  parser.add_argument('--loss_weight_pixel', type=float, default=20,
                       help='The pixel loss scale for optimization. '
-                           '(default: 10)')
+                           '(default: 20)')
   parser.add_argument('--d_scale', type=float, default=1,
                       help='The discriminator loss scale for optimization. '
                            '(default: 1)')
