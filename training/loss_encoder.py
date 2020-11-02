@@ -120,7 +120,7 @@ def E_loss_nei(E, G, D, perceptual_model, reals, feature_scale=0.00005, D_scale=
         with tf.variable_scope('dlatent_adv_loss'):
             dadv_loss = -0.1 * tf.reduce_mean(tf.nn.sigmoid(fake_latent_score_Uniform))
             dadv_loss = autosummary('Loss/scores/dadv_loss', dadv_loss)
-        loss += dadv_loss
+        loss = recon_loss + adv_loss + dadv_loss
         if return_radius:
             return loss, recon_loss, adv_loss, dadv_loss, tf.reduce_mean(latent_radius)
         else:
@@ -167,11 +167,10 @@ def D_logistic_simplegp_3(E, G, D, reals, r1_gamma=10.0, latent_discriminator=No
         loss_w = autosummary('Loss/scores/w', loss_w)
         loss_fake_latent = tf.reduce_mean(tf.nn.sigmoid(fake_latent_score_Uniform))
         loss_fake_latent = autosummary('Loss/scores/w_fake', loss_fake_latent)
-        loss += loss_w
-        loss += loss_fake_latent
-        w_grads = fp32(tf.gradients(w_score_out, [w])[0])
-        w_r1_p = tf.reduce_mean(tf.reduce_sum(tf.square(w_grads), axis=[1, 2]))
-        w_r1_p = autosummary('Loss/wr1p', w_r1_p)
-        loss_gwp = r1_gamma * 0.5 * 0.1 * w_r1_p
-        loss += loss_gwp
+        loss = loss_fake + loss_real + loss_gp + loss_w + loss_fake_latent
+        # w_grads = fp32(tf.gradients(w_score_out, [w])[0])
+        # w_r1_p = tf.reduce_mean(tf.reduce_sum(tf.square(w_grads), axis=[1, 2]))
+        # w_r1_p = autosummary('Loss/wr1p', w_r1_p)
+        # loss_gwp = r1_gamma * 0.5 * 0.1 * w_r1_p
+        # loss += loss_gwp
     return loss, loss_fake, loss_real, loss_gp

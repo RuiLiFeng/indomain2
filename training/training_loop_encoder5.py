@@ -139,7 +139,7 @@ def training_loop(
 
     E_opt = tflib.Optimizer(name='TrainE', learning_rate=learning_rate, **E_opt_args)
     D_opt = tflib.Optimizer(name='TrainD', learning_rate=learning_rate, **D_opt_args)
-    LD_opt = tflib.Optimizer(name='TrainLD', learning_rate=learning_rate * 0.01, **D_opt_args)
+    LD_opt = tflib.Optimizer(name='TrainLD', learning_rate=learning_rate * 0.0001, **D_opt_args)
 
     E_loss_rec = 0.
     E_loss_adv = 0.
@@ -208,9 +208,9 @@ def training_loop(
 
         batch_images = sess.run(image_batch_train)
         feed_dict = {real_train: batch_images}
-        _, recon_, adv_ , radius_ , dadv_ = sess.run([E_train_op, E_loss_rec, E_loss_adv, E_radius, E_loss_dadv], feed_dict)
-        _, _, d_r_, d_f_, d_g_ = sess.run([D_train_op, LD_train_op, D_loss_real, D_loss_fake, D_loss_grad], feed_dict)
-
+        e_loss_, _, recon_, adv_ , radius_ , dadv_ = sess.run([E_loss, E_train_op, E_loss_rec, E_loss_adv, E_radius, E_loss_dadv], feed_dict)
+        d_loss_, _, _, d_r_, d_f_, d_g_ = sess.run([D_loss, D_train_op, LD_train_op, D_loss_real, D_loss_fake, D_loss_grad], feed_dict)
+        print(e_loss_, d_loss_, dadv_)
         cur_nimg += submit_config.batch_size
 
         if it % 50 == 0:
