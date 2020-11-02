@@ -42,16 +42,10 @@ def parse_args():
                       help='Image size for visualization. (default: 256)')
   parser.add_argument('--gpu_id', type=str, default='0',
                       help='Which GPU(s) to use. (default: `0`)')
-  parser.add_argument('--radius', type=int, default=3,
-                      help='radius of each latent w')
   parser.add_argument('--start', type=int, default=0,
                       help='decide start from which images')
   parser.add_argument('--end', type=int, default=1,
                       help='decide end with which images')
-  parser.add_argument('--max_num_layers', type=int, default=8,
-                      help='the maximum layer to replace')
-  parser.add_argument('--total_nums', type=int, default=1e+5,
-                      help='the maximum layer to replace')
   parser.add_argument('--save_raw', action='store_true',
                       help='Whether to save raw images')
   parser.add_argument('--num_iterations', type=int, default=100,
@@ -63,6 +57,8 @@ def parse_args():
                       help='Learning rate for optimization. (default: 0.01)')
   parser.add_argument('--reverse', action='store_true',
                       help='Decide which direction to optimize')
+  parser.add_argument('--num_images', type=int, default=10)
+  parser.add_argument('--model_name', type=str, default='ffhq')
   return parser.parse_args()
 
 
@@ -129,21 +125,39 @@ def main():
   logger.info(f'images shape {images.shape}')
   images = images.astype(np.float32) / 255 * 2.0 - 1.0
 
+  save_interval = args.num_iterations // args.num_images
+  headers = ['Name', 'Original Image', 'Rec Image']
+  for step in range(1, args.num_iterations + 1):
+    if step == args.num_iterations or step % save_interval == 0:
+      headers.append(f'Step {step:04d}')
+  viz_size = None if args.viz_size == 0 else args.viz_size
+  visualizer = HtmlPageVisualizer(
+    num_rows=images.shape[0], num_cols=len(headers), viz_size=viz_size)
+  visualizer.set_headers(headers)
+
   for idx in range(images.shape[0]):
     imgs = images[idx:idx+1]
     sess.run(setter, {x: imgs})
-    x_rec_ = sess.run(x_rec, {x: imgs})
+    x_rec_ = sess.run(x_rec)
     imgs_ = adjust_pixel_range(x_rec_)
+    visualizer.set_cell(idx, 0, text=names[idx])
+    visualizer.set_cell(idx, 1, imgs[0])
+    visualizer.set_cell(idx, 2, imgs_[0])
     if args.save_raw:
       save_image(f'{output_dir}/{names[idx]}_enc_init.png', imgs_[0])
-    for it in tqdm(range(0, args.num_iterations)):
-      _, x_rec_, loss_, feat_loss_, scores_ = sess.run([train_op, x_rec, loss, loss_feat, scores], {x:imgs})
-      print(f'Iter: {it:04d} loss: {loss_} feat_loss: {feat_loss_} score: {scores_}')
-      imgs_ = adjust_pixel_range(x_rec_)
+    col_idx = 3
+    for it in tqdm(range(1, args.num_iterations + 1)):
+      _, loss_, feat_loss_, scores_ = sess.run([train_op, loss, loss_feat, scores], {x:imgs})
+      if it % save_interval == 0:
+        x_rec_ = sess.run(x_rec)
+        imgs_ = adjust_pixel_range(x_rec_)
+        visualizer.set_cell(idx, col_idx, image=imgs_[0])
+        col_idx += 1
+        print(f'Iter: {it:04d} loss: {loss_} feat_loss: {feat_loss_} score: {scores_}')
       if args.save_raw:
         for ii in range(imgs_.shape[0]):
           save_image(f'{output_dir}/{names[idx]}_edit_{it +ii:04d}.png', imgs_[ii])
-
+  visualizer.save(f'{output_dir}/{args.model_name}_inversion.html')
 
 if __name__ == '__main__':
   main()
