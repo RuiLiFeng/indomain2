@@ -56,9 +56,13 @@ def parse_args():
   parser.add_argument('--loss_weight_pixel', type=float, default=10,
                       help='The pixel loss scale for optimization. '
                            '(default: 10)')
-  parser.add_argument('--d_scale', type=float, default=0.1,
+  parser.add_argument('--d_scale', type=float, default=1,
                       help='The discriminator loss scale for optimization. '
-                           '(default: 0.1)')
+                           '(default: 1)')
+  parser.add_argument('--min_values', type=float, default=-5,
+                      help='The min score values for optimization')
+  parser.add_argument('--max_values', type=float, default=100,
+                      help='The max score values for optimization')
   parser.add_argument('--learning_rate', type=float, default=0.001,
                       help='Learning rate for optimization. (default: 0.01)')
   parser.add_argument('--reverse', action='store_true',
@@ -109,8 +113,10 @@ def main():
   loss_pixel = args.loss_weight_pixel * loss_pixel
   if args.reverse:
     scores = -classifier.get_output_for(x_rec, None)
+    scores = tf.clip_by_value(scores, clip_value_min=args.min_values, clip_value_max=args.max_values)
   else:
     scores = classifier.get_output_for(x_rec, None)
+    scores = tf.clip_by_value(scores, clip_value_min=args.min_values, clip_value_max=args.max_values)
   scores = tf.reduce_mean(scores, axis=1)
   adv_score = D.get_output_for(x_rec, None)
   loss_adv = tf.reduce_mean(tf.nn.softplus(-adv_score), axis=1)
@@ -167,8 +173,8 @@ def main():
         imgs_ = adjust_pixel_range(x_rec_)
         visualizer.set_cell(idx, col_idx, image=imgs_[0])
         col_idx += 1
-        print(f'Iter: {it:04d} loss: {np.mean(loss_):.4f} feat_loss: {np.mean(feat_loss_):.4f}'
-              f' pixel_loss: {np.mean(loss_pixel_):.4f} score: {np.mean(scores_):.4f} adv: {np.mean(loss_adv_):.4f}')
+        print(f'Iter: {it:04d} loss: {np.mean(loss_):6.4f} feat_loss: {np.mean(feat_loss_):6.4f}'
+              f' pixel_loss: {np.mean(loss_pixel_):6.4f} score: {np.mean(scores_):6.4f} adv: {np.mean(loss_adv_):6.4f}')
         if args.save_raw:
           for ii in range(imgs_.shape[0]):
             save_image(f'{output_dir}/{names[idx]}_edit_{it +ii:04d}.png', imgs_[ii])
