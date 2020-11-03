@@ -83,14 +83,15 @@ def main():
   assert os.path.exists(image_dir)
   output_dir = args.output_dir or f'results/manipulation/'
   boundary_name = os.path.basename(args.model_path2).split('.')[0].split('-')[-1]
-  job_name = f'{boundary_name}_{image_dir_name}'
+  job_name = f'{boundary_name}_{image_dir_name}_reverse_{args.reverse}'
   logger = setup_logger(output_dir, f'{job_name}.log', f'{job_name}_logger')
   ATTRS = {'age': [0, 1, 2, 3, 4],
            'pose': [0, 1, 2],
-           'male': [2, 3, 4],
+           'male': [1, 2, 3, 4, 5, 6],
            'expression': [2, 3, 4, 5],
-           'glass': [0, 1, 2]}
-
+           'addglass': [0, 1, 2, 3, 4, 5],
+           'removeglass': [0, 1, 2],
+           }
   logger.info(f'Loading model.')
   tflib.init_tf({'rnd.np_random_seed': 1000})
   assert os.path.exists(args.model_path1)
@@ -109,9 +110,7 @@ def main():
   sess = tf.get_default_session()
   x = tf.placeholder(tf.float32, shape=input_shape, name='real_image')
   latent_w = tf.placeholder(tf.float32, shape=[None, num_layers, z_dim], name='latent_w')
-  # w_enc = E.get_output_for(x, is_training=False)
-  # w_enc = tf.reshape(w_enc, [-1, num_layers, z_dim])
-  attr_related_layers = ATTRS.get(args.attr_name, [0, 1, 2])
+  attr_related_layers = ATTRS.get(args.attr_name, list(range(num_layers)))
   wps = []
   for i in range(num_layers):
     if i in attr_related_layers:
