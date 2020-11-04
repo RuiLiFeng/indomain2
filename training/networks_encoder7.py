@@ -365,7 +365,7 @@ def Encoder(
                 norm = tf.sqrt(tf.reduce_sum(eigenstrength * eigenstrength, axis=1, keepdims=True))
                 norm = tf.tile(norm, [1, num_layers * dlatent_size])
                 latent_project = tf.where(norm > 1.0, eigenstrength / norm, eigenstrength)
-                latent_w = latent_project @ np.transpose(w_v) * tf.sqrt(coefs * truncation_psi)
+                latent_w = latent_project @ np.transpose(w_v) * tf.sqrt(coefs * truncation_psi) + w_avg
                 latent_w = tf.identity(latent_w, name='latent_w')
                 if return_reject_ratio:
                     return latent_w, latent_radius, \
