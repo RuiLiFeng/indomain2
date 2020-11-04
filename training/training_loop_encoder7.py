@@ -175,7 +175,8 @@ def training_loop(
     D_loss_fake /= submit_config.num_gpus
     D_loss_grad /= submit_config.num_gpus
     E_radius /= submit_config.num_gpus
-    E_reject_ratio /= submit_config.num_gpus
+    E_reject_ratio_before /= submit_config.num_gpus
+    E_reject_ratio_after /= submit_config.num_gpus
 
     E_train_op = E_opt.apply_updates()
     D_train_op = D_opt.apply_updates()
