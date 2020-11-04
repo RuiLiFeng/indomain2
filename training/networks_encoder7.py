@@ -352,7 +352,7 @@ def Encoder(
         latent_w = sync_batch_norm(hidden[:, dlatent_size * num_layers:], is_training=is_training, num_dev=num_gpus)
 
         if truncation_psi is not None and truncation_cutoff is not None and cov_path is not None:
-            statis_dict = np.load(cov_path).item()
+            statis_dict = np.load(cov_path, allow_pickle=True).item()
             w_e = statis_dict['w_e']
             w_v = statis_dict['w_v']
             w_avg = statis_dict['w_u']
