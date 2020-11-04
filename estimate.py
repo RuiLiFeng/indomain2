@@ -12,10 +12,11 @@ from training import misc
 
 batch_size = 512
 num_sample_w = 1024000
-os.environ["CUDA_VISIBLE_DEVICES"] = '0'
+# os.environ["CUDA_VISIBLE_DEVICES"] = '0'
 tflib.init_tf()
 
-_, _, Gs = misc.load_pkl('/home/admin/workspace/project/data/indomain2/pkl/indomain_pkl/stylegan_mod_ffhq256.pkl')
+# _, _, Gs = misc.load_pkl('/home/admin/workspace/project/data/indomain2/pkl/indomain_pkl/stylegan_mod_ffhq256.pkl')
+_, _, Gs = misc.load_pkl('/gdata2/fengrl/indomain_pkl/stylegan_mod_ffhq256.pkl')
 
 latent_dim = Gs.components.mapping.input_shape[1]
 print('Input latent of mapping layer: [%d, %d] tensors' % (batch_size, latent_dim))
@@ -36,6 +37,9 @@ w_avg = np.mean(ws, axis=0, keepdims=True)
 w_cov = np.cov(np.transpose(ws))
 
 w_e, w_v = np.linalg.eigh(w_cov)
+s_dict={'w_e':w_e, 'w_v':w_v, 'w_u':w_avg}
+
+np.save('w_statistic.npy', s_dict)
 
 
 def elipse(w):
@@ -76,3 +80,8 @@ def square_trunc(w, t_psi, t_ctf, return_stable):
     if return_stable:
         return stable_elipse(w, t_ctf, t_psi, True), stable_elipse(w_r + w_avg, t_ctf, t_psi, True)
     return w_r + w_avg
+
+
+print(trunc(w_test, 4 * 7096, 0.4, True))
+print(trunc(w_test, 3 * 7096, 0.4, True))
+print(trunc(w_test, 4 * 7096, 0.3, True))
