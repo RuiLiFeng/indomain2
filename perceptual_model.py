@@ -27,6 +27,8 @@ class PerceptualModel(Model):
       weights = '/gdata2/fengrl/metrics/vgg.h5'
     elif os.path.exists("/mnt/fengruili.fengruil/metrics/vgg.h5"):
       weights = "/mnt/fengruili.fengruil/metrics/vgg.h5"
+    elif os.path.exists("/home/admin/workspace/project/data/metrics/vgg.h5"):
+      weights = "/home/admin/workspace/project/data/metrics/vgg.h5"
     else:
       weights = 'imagenet'
 
