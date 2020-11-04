@@ -349,8 +349,9 @@ def Encoder(
         # with tf.variable_scope('Latent_radius'):
             # latent_radius = apply_bias(dense(hidden[:, :dlatent_size * num_layers], fmaps=1 * num_layers, use_wscale=True))
             # latent_radius = tf.square(latent_radius) * alpha
-        latent_radius = 0.01
         latent_w = sync_batch_norm(hidden[:, dlatent_size * num_layers:], is_training=is_training, num_dev=num_gpus)
+        latent_radius = tf.get_variable(name='radius', shape=[num_layers],
+                                        initializer=tf.ones([num_layers], dtype=tf.float32), trainable=False)
 
         if truncation_psi is not None and truncation_cutoff is not None and cov_path is not None:
             statis_dict = np.load(cov_path, allow_pickle=True).item()
