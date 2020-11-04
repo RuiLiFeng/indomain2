@@ -358,6 +358,7 @@ def Encoder(
             w_v = statis_dict['w_v']
             w_avg = statis_dict['w_u']
             with tf.variable_scope('Truncation'):
+                truncation_psi = truncation_psi * num_layers * dlatent_size
                 coefs = tf.where(w_e > truncation_cutoff, w_e, truncation_cutoff * tf.ones_like(w_e))
                 coefs = tf.cast(coefs, tf.float32)
                 latent_w = tf.reshape(latent_w, [-1, num_layers * dlatent_size])

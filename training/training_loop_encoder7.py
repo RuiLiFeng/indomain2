@@ -210,7 +210,7 @@ def training_loop(
         cur_nimg += submit_config.batch_size
 
         if it % 50 == 0:
-            print('Iter: %06d Reject_ratio before: %-6.4f Reject_ratio before: %-6.4f recon_loss: %-6.4f adv_loss: %-6.4f d_r_loss: %-6.4f d_f_loss: %-6.4f d_reg: %-6.4f radius %-2.6f time:%-12s' % (
+            print('Iter: %06d Reject_ratio before: %-6.4f Reject_ratio after: %-6.4f recon_loss: %-6.4f adv_loss: %-6.4f d_r_loss: %-6.4f d_f_loss: %-6.4f d_reg: %-6.4f radius %-2.6f time:%-12s' % (
                 it, reject_ratio_b_, reject_ratio_a_, recon_, adv_, d_r_, d_f_, d_g_, radius_, dnnlib.util.format_time(time.time() - start_time)))
             sys.stdout.flush()
             tflib.autosummary.save_summaries(summary_log, it)
