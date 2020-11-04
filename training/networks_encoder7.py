@@ -324,7 +324,7 @@ def Encoder(
             truncation_psi        = 4.0,
             truncation_cutoff     = 0.4,
             cov_path              = None,
-            return_rejection_ratio= False,
+            return_reject_ratio= False,
             **kwargs):
     num_blocks = int(np.log2(size / s0))
 

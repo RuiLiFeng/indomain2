@@ -73,9 +73,13 @@ def D_logistic_simplegp(E, G, D, reals, r1_gamma=10.0):
     return loss, loss_fake, loss_real, loss_gp
 
 
-def E_loss_nei(E, G, D, perceptual_model, reals, feature_scale=0.00005, D_scale=0.1, perceptual_img_size=256, return_radius=False, latent_discriminator=None):
+def E_loss_nei(E, G, D, perceptual_model, reals, feature_scale=0.00005, D_scale=0.1, perceptual_img_size=256, return_radius=False, latent_discriminator=None, return_reject_ratio=False):
     num_layers, latent_dim = G.components.synthesis.input_shape[1:3]
-    latent_w, latent_radius = E.get_output_for(reals, is_training=True)
+    if return_reject_ratio:
+        latent_w, latent_radius, reject_ratio = E.get_output_for(reals, return_reject_ratio=True, is_training=True)
+    else:
+        reject_ratio = None
+        latent_w, latent_radius = E.get_output_for(reals, is_training=True)
     latent_wp = tf.reshape(latent_w, [reals.shape[0], num_layers, latent_dim])
     latent_radius = tf.reshape(latent_radius, [reals.shape[0], num_layers, 1])
 
@@ -129,6 +133,9 @@ def E_loss_nei(E, G, D, perceptual_model, reals, feature_scale=0.00005, D_scale=
             return loss, recon_loss, adv_loss, dadv_loss
 
     if return_radius:
+        if return_reject_ratio:
+            return loss, recon_loss, adv_loss, tf.reduce_mean(latent_radius), reject_ratio
+
         return loss, recon_loss, adv_loss, tf.reduce_mean(latent_radius)
     else:
         return loss, recon_loss, adv_loss

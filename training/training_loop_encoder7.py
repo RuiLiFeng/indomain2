@@ -116,12 +116,8 @@ def training_loop(
             network_pkl = misc.locate_network_pkl(resume_run_id, resume_snapshot)
             print('Loading networks from "%s"...' % network_pkl)
             E, G, D, Gs = misc.load_pkl(network_pkl)
-
             start = int(network_pkl.split('-')[-1].split('.')[0]) // submit_config.batch_size
-            start = 0
             max_iters += start
-            ld = tflib.Network('LD_gpu0', func_name='training.networks_encoder6.latent_Discriminator')
-            ct = tflib.Network('CT_gpu0', func_name='training.networks_encoder6.coordinate_transform')
             print('Start: ', start)
         else:
             print('Constructing networks...')
@@ -129,11 +125,9 @@ def training_loop(
             num_layers = Gs.components.synthesis.input_shape[1]
             E = tflib.Network('E_gpu0', size=submit_config.image_size, filter=filter, filter_max=filter_max,
                               num_layers=num_layers, is_training=True, num_gpus=submit_config.num_gpus, **Encoder_args)
-            ld = tflib.Network('LD_gpu0', func_name='training.networks_encoder5.latent_Discriminator')
-            ct = tflib.Network('CT_gpu0', func_name='training.networks_encoder6.coordinate_transform')
             start = 0
 
-    E.print_layers(); Gs.print_layers(); D.print_layers(); ld.print_layers()
+    E.print_layers(); Gs.print_layers(); D.print_layers()
 
     global_step0 = tf.Variable(start, trainable=False, name='learning_rate_step')
     learning_rate = tf.train.exponential_decay(lr_args.learning_rate, global_step0, lr_args.decay_step,
@@ -149,30 +143,29 @@ def training_loop(
     D_loss_fake = 0.
     D_loss_grad = 0.
     E_radius = 0.
-    E_loss_dadv = 0.
+    E_reject_ratio = 0.
     for gpu in range(submit_config.num_gpus):
         print('Building Graph on GPU %s' % str(gpu))
         with tf.name_scope('GPU%d' % gpu), tf.device('/gpu:%d' % gpu):
             E_gpu = E if gpu == 0 else E.clone(E.name[:-1] + str(gpu))
             D_gpu = D if gpu == 0 else D.clone(D.name + '_shadow')
             G_gpu = Gs if gpu == 0 else Gs.clone(Gs.name + '_shadow')
-            ld_gpu = ld if gpu == 0 else ld.clone(ld.name + '_shadow')
             perceptual_model = PerceptualModel(img_size=[E_loss_args.perceptual_img_size, E_loss_args.perceptual_img_size], multi_layers=False)
             real_gpu = process_reals(real_split[gpu], mirror_augment, drange_data, drange_net)
             with tf.name_scope('E_loss'), tf.control_dependencies(None):
-                E_loss, recon_loss, adv_loss, dadv_loss, radius = dnnlib.util.call_func_by_name(E=E_gpu, G=G_gpu, D=D_gpu, perceptual_model=perceptual_model, reals=real_gpu, return_radius=True, latent_discriminator=ld_gpu, **E_loss_args)
+                E_loss, recon_loss, adv_loss, radius, reject_ratio = dnnlib.util.call_func_by_name(E=E_gpu, G=G_gpu, D=D_gpu, perceptual_model=perceptual_model, reals=real_gpu, return_radius=True, return_reject_ratio=True, **E_loss_args)
                 E_loss_rec += recon_loss
                 E_loss_adv += adv_loss
                 E_radius += radius
-                E_loss_dadv += dadv_loss
+                E_reject_ratio += reject_ratio
             with tf.name_scope('D_loss'), tf.control_dependencies(None):
-                D_loss, loss_fake, loss_real, loss_gp = dnnlib.util.call_func_by_name(E=E_gpu, G=G_gpu, D=D_gpu, reals=real_gpu, latent_discriminator=ld_gpu, **D_loss_args)
+                D_loss, loss_fake, loss_real, loss_gp = dnnlib.util.call_func_by_name(E=E_gpu, G=G_gpu, D=D_gpu, reals=real_gpu, **D_loss_args)
                 D_loss_real += loss_real
                 D_loss_fake += loss_fake
                 D_loss_grad += loss_gp
             with tf.control_dependencies([add_global0]):
                 E_opt.register_gradients(E_loss, E_gpu.trainables)
-                D_opt.register_gradients(D_loss, list(D_gpu.trainables.values()) + list(ld_gpu.trainables.values()))
+                D_opt.register_gradients(D_loss, D_gpu.trainables)
 
     E_loss_rec /= submit_config.num_gpus
     E_loss_adv /= submit_config.num_gpus
@@ -180,7 +173,7 @@ def training_loop(
     D_loss_fake /= submit_config.num_gpus
     D_loss_grad /= submit_config.num_gpus
     E_radius /= submit_config.num_gpus
-    E_loss_dadv /= submit_config.num_gpus
+    E_reject_ratio /= submit_config.num_gpus
 
     E_train_op = E_opt.apply_updates()
     D_train_op = D_opt.apply_updates()
@@ -208,14 +201,14 @@ def training_loop(
 
         batch_images = sess.run(image_batch_train)
         feed_dict = {real_train: batch_images}
-        _, recon_, adv_ , radius_ , dadv_ = sess.run([E_train_op, E_loss_rec, E_loss_adv, E_radius, E_loss_dadv], feed_dict)
+        _, reject_ratio_, recon_, adv_ , radius_ = sess.run([E_train_op, E_reject_ratio, E_loss_rec, E_loss_adv, E_radius], feed_dict)
         _, d_r_, d_f_, d_g_ = sess.run([D_train_op, D_loss_real, D_loss_fake, D_loss_grad], feed_dict)
 
         cur_nimg += submit_config.batch_size
 
         if it % 50 == 0:
-            print('Iter: %06d recon_loss: %-6.4f adv_loss: %-6.4f d_r_loss: %-6.4f d_f_loss: %-6.4f d_reg: %-6.4f radius %-2.6f dadv_loss: %-6.4f time:%-12s' % (
-                it, recon_, adv_, d_r_, d_f_, d_g_, radius_, dadv_, dnnlib.util.format_time(time.time() - start_time)))
+            print('Iter: %06d Reject_ratio: %-6.4f recon_loss: %-6.4f adv_loss: %-6.4f d_r_loss: %-6.4f d_f_loss: %-6.4f d_reg: %-6.4f radius %-2.6f time:%-12s' % (
+                it, reject_ratio_, recon_, adv_, d_r_, d_f_, d_g_, radius_, dnnlib.util.format_time(time.time() - start_time)))
             sys.stdout.flush()
             tflib.autosummary.save_summaries(summary_log, it)
 
@@ -235,7 +228,7 @@ def training_loop(
 
             if cur_tick % network_snapshot_ticks == 0:
                 pkl = os.path.join(submit_config.run_dir, 'network-snapshot-%08d.pkl' % (cur_nimg))
-                misc.save_pkl((E, G, D, ld, ct, Gs), pkl)
+                misc.save_pkl((E, G, D, Gs), pkl)
 
     misc.save_pkl((E, G, D, Gs), os.path.join(submit_config.run_dir, 'network-final.pkl'))
     summary_log.close()
