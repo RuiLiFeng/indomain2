@@ -36,6 +36,8 @@ def main():
                         help='the name of the training dataset (defaults; ffhq)')
     parser.add_argument('--mirror_augment', action='store_false',
                         help='Mirror augment (default: True)')
+    parser.add_argument('--cov_path', type=str, default=None,
+                        help='the name of the training dataset (defaults; ffhq)')
     args = parser.parse_args()
 
     train           = EasyDict(run_func_name='training.training_loop_encoder' + str(args.id) + '.training_loop')
@@ -43,6 +45,7 @@ def main():
     Encoder.truncation_psi = args.truncation_psi
     Encoder.truncation_cutoff = args.truncation_cutoff
     Encoder.dlatent_avg_path = args.dlatent_avg_path
+    Encoder.cov_path = args.cov_path
     E_opt           = EasyDict(beta1=0.9, beta2=0.99, epsilon=1e-8)
     D_opt           = EasyDict(beta1=0.9, beta2=0.99, epsilon=1e-8)
     E_loss          = EasyDict(func_name='training.loss_encoder.E_loss_nei',
