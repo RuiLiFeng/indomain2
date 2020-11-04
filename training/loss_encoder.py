@@ -77,6 +77,8 @@ def E_loss_nei(E, G, D, perceptual_model, reals, feature_scale=0.00005, D_scale=
     num_layers, latent_dim = G.components.synthesis.input_shape[1:3]
     if return_reject_ratio:
         latent_w, latent_radius, reject_ratio = E.get_output_for(reals, return_reject_ratio=True, is_training=True)
+        latent_radius = tf.tile(latent_radius, [reals.shape[0], 1])
+
     else:
         reject_ratio = None
         latent_w, latent_radius = E.get_output_for(reals, is_training=True)

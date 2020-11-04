@@ -352,7 +352,6 @@ def Encoder(
         latent_w = sync_batch_norm(hidden[:, dlatent_size * num_layers:], is_training=is_training, num_dev=num_gpus)
         latent_radius = tf.get_variable(name='radius',
                                         initializer=tf.ones([1, num_layers], dtype=tf.float32), trainable=False) * 0.01
-        latent_radius = tf.tile(latent_radius, [latent_w.shape[0].value, 1])
         if truncation_psi is not None and truncation_cutoff is not None and cov_path is not None:
             statis_dict = np.load(cov_path, allow_pickle=True).item()
             w_e = statis_dict['w_e']
