@@ -39,7 +39,7 @@ w_cov = np.cov(np.transpose(ws))
 w_e, w_v = np.linalg.eigh(w_cov)
 s_dict={'w_e':w_e, 'w_v':w_v, 'w_u':w_avg}
 
-np.save('w_statistic.npy', s_dict)
+np.save('/gdata2/fengrl/indomain2/w_statistic.npy', s_dict)
 
 
 def elipse(w):
