@@ -359,7 +359,7 @@ def Encoder(
             with tf.variable_scope('Truncation'):
                 coefs = tf.where(w_e > truncation_cutoff, w_e, truncation_cutoff * tf.ones_like(w_e))
                 latent_w = tf.reshape(latent_w, [-1, num_layers * dlatent_size])
-                eigenstrength = (latent_w - w_avg) @ w_v / np.sqrt(coefs * truncation_psi)
+                eigenstrength = (latent_w - w_avg) @ w_v / tf.sqrt(coefs * truncation_psi)
                 norm = tf.sqrt(tf.reduce_sum(eigenstrength * eigenstrength, axis=1, keepdims=True))
                 norm = tf.tile(norm, [1, num_layers * dlatent_size])
                 latent_project = tf.where(norm > 1.0, eigenstrength / norm, eigenstrength)
