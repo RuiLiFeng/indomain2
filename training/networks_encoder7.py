@@ -358,6 +358,7 @@ def Encoder(
             w_avg = statis_dict['w_u']
             with tf.variable_scope('Truncation'):
                 coefs = tf.where(w_e > truncation_cutoff, w_e, truncation_cutoff * tf.ones_like(w_e))
+                coefs = tf.cast(coefs, tf.float32)
                 latent_w = tf.reshape(latent_w, [-1, num_layers * dlatent_size])
                 eigenstrength = (latent_w - w_avg) @ w_v / tf.sqrt(coefs * truncation_psi)
                 norm = tf.sqrt(tf.reduce_sum(eigenstrength * eigenstrength, axis=1, keepdims=True))
