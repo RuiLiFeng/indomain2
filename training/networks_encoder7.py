@@ -369,7 +369,7 @@ def Encoder(
                 latent_w = tf.identity(latent_w, name='latent_w')
                 if return_reject_ratio:
                     rej_b = tf.reduce_mean(tf.cast(tf.reduce_sum(eigenstrength * eigenstrength, axis=1) > 1.0, tf.float32))
-                    pro_a = (latent_w - w_avg) @ tf.transpose(w_v) / tf.sqrt(coefs * truncation_psi)
+                    pro_a = (latent_w - w_avg) @ np.transpose(w_v) / tf.sqrt(coefs * truncation_psi)
                     rej_a = tf.reduce_mean(tf.cast(tf.reduce_sum(pro_a * pro_a, axis=1) > 1.0, tf.float32))
                     return latent_w, latent_radius, rej_b, rej_a
     return latent_w, latent_radius
