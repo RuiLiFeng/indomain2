@@ -143,7 +143,8 @@ def main():
   else:
     scores = classifier.get_output_for(x_rec, None)
     scores = tf.clip_by_value(scores, clip_value_min=args.min_values, clip_value_max=args.max_values)
-  cond_score = 0.5 * class_glasses.get_output_for(x_rec, None)
+  cond_score = 0.5 * tf.clip_by_value(class_glasses.get_output_for(x_rec, None),
+                                      clip_value_min=-7.0, clip_value_max=7.0)
   scores = tf.reduce_mean(scores - cond_score, axis=1)
   adv_score = D.get_output_for(x_rec, None)
   loss_adv = tf.reduce_mean(tf.nn.softplus(-adv_score), axis=1)
