@@ -89,7 +89,8 @@ def main():
            'pose': [0, 1, 2],
            'male': [2, 3, 4],
            'expression': [2, 3, 4, 5],
-           'glass': [0, 1, 2]}
+           'glass': [0, 1, 2],
+           'default': [0,1,2,3,4,5]}
 
   logger.info(f'Loading model.')
   tflib.init_tf({'rnd.np_random_seed': 1000})
@@ -97,6 +98,7 @@ def main():
   assert os.path.exists(args.model_path2)
   E, _, D, Gs = misc.load_pkl(args.model_path1)
   classifier = misc.load_pkl(args.model_path2)
+  class_glasses = misc.load_pkl("/gdata2/fengrl/metrics/celebahq-classifier-19-eyeglasses.pkl")
 
   # Get input size.
   image_size = E.input_shape[2]
@@ -141,7 +143,9 @@ def main():
   else:
     scores = classifier.get_output_for(x_rec, None)
     scores = tf.clip_by_value(scores, clip_value_min=args.min_values, clip_value_max=args.max_values)
-  scores = tf.reduce_mean(scores, axis=1)
+  cond_score = 0.5 * tf.clip_by_value(class_glasses.get_output_for(x_rec, None),
+                                      clip_value_min=-7.0, clip_value_max=7.0)
+  scores = tf.reduce_mean(scores - cond_score, axis=1)
   adv_score = D.get_output_for(x_rec, None)
   loss_adv = tf.reduce_mean(tf.nn.softplus(-adv_score), axis=1)
   loss_adv = args.d_scale * loss_adv
