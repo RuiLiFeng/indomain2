@@ -151,7 +151,7 @@ def main():
   adv_score = D.get_output_for(x_rec, None)
   loss_adv = tf.reduce_mean(tf.nn.softplus(-adv_score), axis=1)
   loss_adv = args.d_scale * loss_adv
-  loss_w = 0.5 * tf.reduce_mean(tf.square(wp - latent_w))
+  loss_w = 0
   # loss = loss_feat + loss_pixel + scores + loss_adv
   loss = loss_feat + loss_w + scores + loss_adv
   optimizer = tf.train.AdamOptimizer(learning_rate=args.learning_rate)
