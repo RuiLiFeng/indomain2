@@ -203,7 +203,7 @@ def main():
     col_idx = 3
     for it in range(1, args.num_iterations + 1):
       output_node = [train_op, loss, loss_feat, scores, loss_pixel, loss_adv]
-      _, loss_, feat_loss_, scores_, loss_pixel_, loss_adv_ = sess.run(output_node, {x: imgs})
+      _, loss_, feat_loss_, scores_, loss_pixel_, loss_adv_ = sess.run(output_node, {x: imgs, latent_w: latent_code})
       if it % save_interval == 0:
         x_rec_ = sess.run(x_rec)
         imgs_ = adjust_pixel_range(x_rec_)
