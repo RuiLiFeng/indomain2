@@ -145,15 +145,11 @@ def main():
     scores = tf.clip_by_value(scores, clip_value_min=args.min_values, clip_value_max=args.max_values)
   cond_score = 0.5 * tf.clip_by_value(class_glasses.get_output_for(x_rec, None),
                                       clip_value_min=-7.0, clip_value_max=7.0)
-  # scores = tf.reduce_mean(scores - cond_score, axis=1)
-  scores = tf.reduce_mean(scores, axis=1)
-
+  scores = tf.reduce_mean(scores - cond_score, axis=1)
   adv_score = D.get_output_for(x_rec, None)
   loss_adv = tf.reduce_mean(tf.nn.softplus(-adv_score), axis=1)
   loss_adv = args.d_scale * loss_adv
-  loss_w = 0
-  # loss = loss_feat + loss_pixel + scores + loss_adv
-  loss = loss_feat + loss_w + scores + loss_adv
+  loss = loss_feat + loss_pixel + scores + loss_adv
   optimizer = tf.train.AdamOptimizer(learning_rate=args.learning_rate)
   train_op = optimizer.minimize(loss, var_list=code_to_optim)
   tflib.init_uninitialized_vars()
@@ -203,7 +199,7 @@ def main():
     col_idx = 3
     for it in range(1, args.num_iterations + 1):
       output_node = [train_op, loss, loss_feat, scores, loss_pixel, loss_adv]
-      _, loss_, feat_loss_, scores_, loss_pixel_, loss_adv_ = sess.run(output_node, {x: imgs, latent_w: latent_code})
+      _, loss_, feat_loss_, scores_, loss_pixel_, loss_adv_ = sess.run(output_node, {x: imgs})
       if it % save_interval == 0:
         x_rec_ = sess.run(x_rec)
         imgs_ = adjust_pixel_range(x_rec_)
