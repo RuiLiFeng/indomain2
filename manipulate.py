@@ -67,7 +67,7 @@ def main():
   assert os.path.exists(boundary_path)
   boundary_name = os.path.splitext(os.path.basename(boundary_path))[0]
   output_dir = args.output_dir or 'results/manipulation'
-  job_name = f'{boundary_name.upper()}_{image_dir_name}'
+  job_name = f'{boundary_name}_{image_dir_name}'
   logger = setup_logger(output_dir, f'{job_name}.log', f'{job_name}_logger')
 
   # Load model.
