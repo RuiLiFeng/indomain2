@@ -33,6 +33,8 @@ def parse_args():
   parser.add_argument('image_dir', type=str,
                       help='Image directory, which includes original images, '
                            'inverted codes, and image list.')
+  parser.add_argument('--cond_path', type=str, default='',
+                      help='Path to the consitional classifier model.')
   parser.add_argument('-o', '--output_dir', type=str, default='',
                       help='Directory to save the results. If not specified, '
                            '`./results/inversion/${IMAGE_LIST}` '
@@ -62,15 +64,19 @@ def parse_args():
                            '(default: 1)')
   parser.add_argument('--min_values', type=float, default=-5,
                       help='The min score values for optimization')
+  parser.add_argument('--min_values_cond', type=float, default=-4,
+                      help='The min score values for optimization')
   parser.add_argument('--max_values', type=float, default=100,
                       help='The max score values for optimization')
   parser.add_argument('--learning_rate', type=float, default=0.001,
                       help='Learning rate for optimization. (default: 0.01)')
   parser.add_argument('--reverse', action='store_true',
                       help='Decide which direction to optimize')
+  parser.add_argument('--reverse_cond', action='store_true',
+                      help='Decide which direction to optimize')
   parser.add_argument('--num_images', type=int, default=10)
   parser.add_argument('--model_name', type=str, default='ffhq')
-  parser.add_argument('--attr_name', type=str, default='expression')
+  parser.add_argument('--attr_name', type=str, default='')
   return parser.parse_args()
 
 
@@ -98,6 +104,8 @@ def main():
   assert os.path.exists(args.model_path2)
   E, _, D, Gs = misc.load_pkl(args.model_path1)
   classifier = misc.load_pkl(args.model_path2)
+  if os.path.exists(args.cond_path):
+    cond_classifier = misc.load_pkl(args.cond_path)
 
   # Get input size.
   image_size = E.input_shape[2]
@@ -110,14 +118,15 @@ def main():
   sess = tf.get_default_session()
   x = tf.placeholder(tf.float32, shape=input_shape, name='real_image')
   latent_w = tf.placeholder(tf.float32, shape=[None, num_layers, z_dim], name='latent_w')
-  attr_related_layers = ATTRS.get(args.attr_name, list(range(num_layers)))
+  attr_related_layers = ATTRS.get(args.attr_name, list(range(8)))
   wps = []
   for i in range(num_layers):
     if i in attr_related_layers:
       trainable = True
     else:
       trainable = False
-    latent_code = tf.get_variable(shape=[1, 1, z_dim], name=f'latent_code{i}', trainable=trainable)
+    latent_code = tf.get_variable(shape=[1, 1, z_dim],
+                                  name=f'latent_code{i}', trainable=trainable)
     wps.append(latent_code)
   wp = tf.concat(wps, axis=1)
   x_rec = Gs.components.synthesis.get_output_for(wp, randomize_noise=False)
@@ -136,15 +145,26 @@ def main():
   loss_pixel = args.loss_weight_pixel * loss_pixel
   if args.reverse:
     scores = -classifier.get_output_for(x_rec, None)
-    scores = tf.clip_by_value(scores, clip_value_min=args.min_values, clip_value_max=args.max_values)
   else:
     scores = classifier.get_output_for(x_rec, None)
-    scores = tf.clip_by_value(scores, clip_value_min=args.min_values, clip_value_max=args.max_values)
+  scores = tf.clip_by_value(scores,
+                            clip_value_min=args.min_values,
+                            clip_value_max=args.max_values)
+  cond_scores = tf.zeros_like(scores)
+  if os.path.exists(args.cond_path):
+    if args.reverse_cond:
+      cond_scores = -cond_classifier.get_output_for(x_rec, None)
+    else:
+      cond_scores = cond_classifier.get_output_for(x_rec, None)
+    cond_scores = tf.clip_by_value(cond_scores,
+                                   clip_value_min=args.min_values_cond,
+                                   clip_value_max=args.max_values)
+  cond_scores = tf.reduce_mean(cond_scores, axis=1)
   scores = tf.reduce_mean(scores, axis=1)
   adv_score = D.get_output_for(x_rec, None)
   loss_adv = tf.reduce_mean(tf.nn.softplus(-adv_score), axis=1)
   loss_adv = args.d_scale * loss_adv
-  loss = loss_feat + loss_pixel + scores + loss_adv
+  loss = loss_feat + loss_pixel + scores + loss_adv + cond_scores
   optimizer = tf.train.AdamOptimizer(learning_rate=args.learning_rate)
   train_op = optimizer.minimize(loss, var_list=code_to_optim)
   tflib.init_uninitialized_vars()
@@ -193,15 +213,16 @@ def main():
     visualizer.set_cell(idx, 2, image=images_invi[idx])
     col_idx = 3
     for it in range(1, args.num_iterations + 1):
-      output_node = [train_op, loss, loss_feat, scores, loss_pixel, loss_adv]
-      _, loss_, feat_loss_, scores_, loss_pixel_, loss_adv_ = sess.run(output_node, {x: imgs})
+      output_node = [train_op, loss, loss_feat, scores, cond_scores, loss_pixel, loss_adv]
+      _, loss_, cond_loss_, feat_loss_, scores_, loss_pixel_, loss_adv_ = sess.run(output_node, {x: imgs})
       if it % save_interval == 0:
         x_rec_ = sess.run(x_rec)
         imgs_ = adjust_pixel_range(x_rec_)
         visualizer.set_cell(idx, col_idx, image=imgs_[0])
         col_idx += 1
         print(f'Iter: {it:04d} loss: {np.mean(loss_):6.4f} feat_loss: {np.mean(feat_loss_):6.4f}'
-              f' pixel_loss: {np.mean(loss_pixel_):6.4f} score: {np.mean(scores_):6.4f} adv: {np.mean(loss_adv_):6.4f}')
+              f' pixel_loss: {np.mean(loss_pixel_):6.4f} score: {np.mean(scores_):6.4f}'
+              f' cond_loss: {np.mean(cond_loss_):6.4f} adv: {np.mean(loss_adv_):6.4f}')
   visualizer.save(f'{output_dir}/{job_name}.html')
 
 
