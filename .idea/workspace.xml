@@ -20,8 +20,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f39337b4-eaaa-47c5-8e5a-7b74b0769531" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/manipulate_cond.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edit_optim_inversion.py" beforeDir="false" afterPath="$PROJECT_DIR$/edit_optim_inversion.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,7 +55,7 @@
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../idinvert_refine" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../idinvert_ghfeat" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -67,15 +67,15 @@
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\program\indomain2\indomain2\training" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
       <recent name="D:\program\indomain2\indomain2" />
       <recent name="D:\program\indomain2\indomain2\training" />
       <recent name="E:\program\idinvert-master\indomain2" />
       <recent name="E:\program\idinvert-master\indomain2\training" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\program\indomain2\indomain2\training" />
     </key>
   </component>
   <component name="RunManager">
@@ -276,7 +276,14 @@
       <option name="project" value="LOCAL" />
       <updated>1604846068309</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="minor">
+      <created>1604905677955</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1604905677955</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -307,32 +314,32 @@
     <MESSAGE value="change default loss weight." />
     <MESSAGE value="support layer-wise optimization." />
     <MESSAGE value="add editing script using inversion results." />
-    <MESSAGE value="minor" />
     <MESSAGE value="add face api from azure." />
     <MESSAGE value="add split_tfrecords.py" />
     <MESSAGE value="add condition manipulation." />
     <MESSAGE value="add mani.sh" />
     <MESSAGE value="minor." />
     <MESSAGE value="debug" />
-    <option name="LAST_COMMIT_MESSAGE" value="debug" />
+    <MESSAGE value="minor" />
+    <option name="LAST_COMMIT_MESSAGE" value="minor" />
   </component>
   <component name="WindowStateProjectService">
     <state x="457" y="197" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1604396253943">
       <screen x="65" y="24" width="1855" height="1056" />
     </state>
     <state x="457" y="197" key="#com.intellij.execution.impl.EditConfigurationsDialog/65.24.1855.1056@65.24.1855.1056" timestamp="1604396253943" />
-    <state x="604" y="134" key="CommitChangelistDialog2" timestamp="1604905564724">
+    <state x="604" y="134" key="CommitChangelistDialog2" timestamp="1604905677846">
       <screen x="65" y="24" width="1855" height="1056" />
     </state>
-    <state x="604" y="134" key="CommitChangelistDialog2/65.24.1855.1056@65.24.1855.1056" timestamp="1604905564724" />
+    <state x="604" y="134" key="CommitChangelistDialog2/65.24.1855.1056@65.24.1855.1056" timestamp="1604905677846" />
     <state x="165" y="96" width="1655" height="792" key="DiffContextDialog" timestamp="1604654695844">
       <screen x="65" y="24" width="1855" height="1056" />
     </state>
     <state x="165" y="96" width="1655" height="792" key="DiffContextDialog/65.24.1855.1056@65.24.1855.1056" timestamp="1604654695844" />
-    <state x="780" y="297" key="FileChooserDialogImpl" timestamp="1604831834684">
+    <state x="780" y="297" key="FileChooserDialogImpl" timestamp="1604916752089">
       <screen x="65" y="24" width="1855" height="1056" />
     </state>
-    <state x="780" y="297" key="FileChooserDialogImpl/65.24.1855.1056@65.24.1855.1056" timestamp="1604831834684" />
+    <state x="780" y="297" key="FileChooserDialogImpl/65.24.1855.1056@65.24.1855.1056" timestamp="1604916752089" />
     <state width="1832" height="354" key="GridCell.Tab.0.bottom" timestamp="1604629500743">
       <screen x="65" y="24" width="1855" height="1056" />
     </state>
@@ -354,13 +361,13 @@
     </state>
     <state x="-998" y="27" key="SettingsEditor/0.0.1504.963/-1080.-240.1080.1880@-1080.-240.1080.1880" timestamp="1603972367430" />
     <state x="486" y="174" key="SettingsEditor/65.24.1855.1056@65.24.1855.1056" timestamp="1604231487017" />
-    <state x="592" y="275" key="Vcs.Push.Dialog.v2" timestamp="1604846083461">
+    <state x="592" y="275" key="Vcs.Push.Dialog.v2" timestamp="1604905682861">
       <screen x="65" y="24" width="1855" height="1056" />
     </state>
-    <state x="592" y="275" key="Vcs.Push.Dialog.v2/65.24.1855.1056@65.24.1855.1056" timestamp="1604846083461" />
-    <state x="670" y="332" key="git4idea.merge.GitPullDialog" timestamp="1604845184509">
+    <state x="592" y="275" key="Vcs.Push.Dialog.v2/65.24.1855.1056@65.24.1855.1056" timestamp="1604905682861" />
+    <state x="670" y="332" key="git4idea.merge.GitPullDialog" timestamp="1604920419179">
       <screen x="65" y="24" width="1855" height="1056" />
     </state>
-    <state x="670" y="332" key="git4idea.merge.GitPullDialog/65.24.1855.1056@65.24.1855.1056" timestamp="1604845184509" />
+    <state x="670" y="332" key="git4idea.merge.GitPullDialog/65.24.1855.1056@65.24.1855.1056" timestamp="1604920419179" />
   </component>
 </project>
