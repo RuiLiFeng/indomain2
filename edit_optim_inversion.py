@@ -89,7 +89,10 @@ def main():
   assert os.path.exists(image_dir)
   output_dir = args.output_dir or f'results/manipulation/'
   boundary_name = os.path.basename(args.model_path2).split('.')[0].split('-')[-1]
-  job_name = f'{boundary_name}_{image_dir_name}_reverse_{args.reverse}'
+  c_boundary_name = 'foo'
+  if os.path.exists(args.cond_path):
+      c_boundary_name = os.path.basename(args.cond_path).split('.')[0].split('-')[-1]
+  job_name = f'{boundary_name}_{image_dir_name}_reverse_{args.reverse}_cond_{c_boundary_name}_rev_{args.reverse_cond}'
   logger = setup_logger(output_dir, f'{job_name}.log', f'{job_name}_logger')
   ATTRS = {'age': [0, 1, 2, 3, 4],
            'pose': [0, 1, 2],
