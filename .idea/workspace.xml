@@ -20,8 +20,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f39337b4-eaaa-47c5-8e5a-7b74b0769531" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/inter_optim_inversion.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dis_metrics.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dis_res.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/disentanglement_celeba.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/disentanglement_celeba_8x8.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/disentanglement_glasses.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/disentanglement_metrics.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/face_api_from_azure.py" beforeDir="false" afterPath="$PROJECT_DIR$/face_api_from_azure.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,7 +61,7 @@
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../BiGBiGAN" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../RealGAN" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -78,7 +84,49 @@
       <recent name="E:\program\idinvert-master\indomain2\training" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.dis_res">
+    <configuration name="dis_res" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="idinvert-master" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/dis_res.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="disentanglement_celeba" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="idinvert-master" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/disentanglement_celeba.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="face_api_from_azure" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="idinvert-master" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -102,7 +150,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.dis_res" />
         <item itemvalue="Python.face_api_from_azure" />
+        <item itemvalue="Python.disentanglement_celeba" />
       </list>
     </recent_temporary>
   </component>
@@ -290,7 +340,14 @@
       <option name="project" value="LOCAL" />
       <updated>1604920448238</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="add inter_optim_inversion.py.">
+      <created>1605008855944</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1605008855944</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -329,50 +386,67 @@
     <MESSAGE value="debug" />
     <MESSAGE value="minor" />
     <MESSAGE value="add conditional mani using interfacegan." />
-    <option name="LAST_COMMIT_MESSAGE" value="add conditional mani using interfacegan." />
+    <MESSAGE value="add inter_optim_inversion.py." />
+    <option name="LAST_COMMIT_MESSAGE" value="add inter_optim_inversion.py." />
   </component>
   <component name="WindowStateProjectService">
     <state x="457" y="197" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1604396253943">
       <screen x="65" y="24" width="1855" height="1056" />
     </state>
     <state x="457" y="197" key="#com.intellij.execution.impl.EditConfigurationsDialog/65.24.1855.1056@65.24.1855.1056" timestamp="1604396253943" />
-    <state x="604" y="134" key="CommitChangelistDialog2" timestamp="1604920448150">
+    <state x="604" y="134" key="CommitChangelistDialog2" timestamp="1605008855851">
       <screen x="65" y="24" width="1855" height="1056" />
     </state>
-    <state x="604" y="134" key="CommitChangelistDialog2/65.24.1855.1056@65.24.1855.1056" timestamp="1604920448150" />
+    <state x="604" y="134" key="CommitChangelistDialog2/65.24.1855.1056@65.24.1855.1056" timestamp="1605008855851" />
     <state x="165" y="96" width="1655" height="792" key="DiffContextDialog" timestamp="1604654695844">
       <screen x="65" y="24" width="1855" height="1056" />
     </state>
     <state x="165" y="96" width="1655" height="792" key="DiffContextDialog/65.24.1855.1056@65.24.1855.1056" timestamp="1604654695844" />
-    <state x="780" y="297" key="FileChooserDialogImpl" timestamp="1604981259278">
+    <state x="780" y="297" key="FileChooserDialogImpl" timestamp="1605412210121">
       <screen x="65" y="24" width="1855" height="1056" />
     </state>
-    <state x="780" y="297" key="FileChooserDialogImpl/65.24.1855.1056@65.24.1855.1056" timestamp="1604981259278" />
-    <state width="1832" height="354" key="GridCell.Tab.0.bottom" timestamp="1604629500743">
+    <state x="780" y="297" key="FileChooserDialogImpl/65.24.1855.1056@65.24.1855.1056" timestamp="1605412210121" />
+    <state width="1832" height="191" key="GridCell.Tab.0.bottom" timestamp="1605415887910">
       <screen x="65" y="24" width="1855" height="1056" />
     </state>
-    <state width="1832" height="354" key="GridCell.Tab.0.bottom/65.24.1855.1056@65.24.1855.1056" timestamp="1604629500743" />
-    <state width="1832" height="354" key="GridCell.Tab.0.center" timestamp="1604629500742">
+    <state width="1832" height="191" key="GridCell.Tab.0.bottom/65.24.1855.1056@65.24.1855.1056" timestamp="1605415887910" />
+    <state width="1832" height="191" key="GridCell.Tab.0.center" timestamp="1605415887910">
       <screen x="65" y="24" width="1855" height="1056" />
     </state>
-    <state width="1832" height="354" key="GridCell.Tab.0.center/65.24.1855.1056@65.24.1855.1056" timestamp="1604629500742" />
-    <state width="1832" height="354" key="GridCell.Tab.0.left" timestamp="1604629500741">
+    <state width="1832" height="191" key="GridCell.Tab.0.center/65.24.1855.1056@65.24.1855.1056" timestamp="1605415887910" />
+    <state width="1832" height="191" key="GridCell.Tab.0.left" timestamp="1605415887909">
       <screen x="65" y="24" width="1855" height="1056" />
     </state>
-    <state width="1832" height="354" key="GridCell.Tab.0.left/65.24.1855.1056@65.24.1855.1056" timestamp="1604629500741" />
-    <state width="1832" height="354" key="GridCell.Tab.0.right" timestamp="1604629500742">
+    <state width="1832" height="191" key="GridCell.Tab.0.left/65.24.1855.1056@65.24.1855.1056" timestamp="1605415887909" />
+    <state width="1832" height="191" key="GridCell.Tab.0.right" timestamp="1605415887910">
       <screen x="65" y="24" width="1855" height="1056" />
     </state>
-    <state width="1832" height="354" key="GridCell.Tab.0.right/65.24.1855.1056@65.24.1855.1056" timestamp="1604629500742" />
+    <state width="1832" height="191" key="GridCell.Tab.0.right/65.24.1855.1056@65.24.1855.1056" timestamp="1605415887910" />
+    <state width="1832" height="365" key="GridCell.Tab.1.bottom" timestamp="1605415801287">
+      <screen x="65" y="24" width="1855" height="1056" />
+    </state>
+    <state width="1832" height="365" key="GridCell.Tab.1.bottom/65.24.1855.1056@65.24.1855.1056" timestamp="1605415801287" />
+    <state width="1832" height="365" key="GridCell.Tab.1.center" timestamp="1605415801286">
+      <screen x="65" y="24" width="1855" height="1056" />
+    </state>
+    <state width="1832" height="365" key="GridCell.Tab.1.center/65.24.1855.1056@65.24.1855.1056" timestamp="1605415801286" />
+    <state width="1832" height="365" key="GridCell.Tab.1.left" timestamp="1605415801286">
+      <screen x="65" y="24" width="1855" height="1056" />
+    </state>
+    <state width="1832" height="365" key="GridCell.Tab.1.left/65.24.1855.1056@65.24.1855.1056" timestamp="1605415801286" />
+    <state width="1832" height="365" key="GridCell.Tab.1.right" timestamp="1605415801287">
+      <screen x="65" y="24" width="1855" height="1056" />
+    </state>
+    <state width="1832" height="365" key="GridCell.Tab.1.right/65.24.1855.1056@65.24.1855.1056" timestamp="1605415801287" />
     <state x="486" y="174" key="SettingsEditor" timestamp="1604231487017">
       <screen x="65" y="24" width="1855" height="1056" />
     </state>
     <state x="-998" y="27" key="SettingsEditor/0.0.1504.963/-1080.-240.1080.1880@-1080.-240.1080.1880" timestamp="1603972367430" />
     <state x="486" y="174" key="SettingsEditor/65.24.1855.1056@65.24.1855.1056" timestamp="1604231487017" />
-    <state x="592" y="275" key="Vcs.Push.Dialog.v2" timestamp="1604905682861">
+    <state x="592" y="275" key="Vcs.Push.Dialog.v2" timestamp="1605008866364">
       <screen x="65" y="24" width="1855" height="1056" />
     </state>
-    <state x="592" y="275" key="Vcs.Push.Dialog.v2/65.24.1855.1056@65.24.1855.1056" timestamp="1604905682861" />
+    <state x="592" y="275" key="Vcs.Push.Dialog.v2/65.24.1855.1056@65.24.1855.1056" timestamp="1605008866364" />
     <state x="670" y="332" key="git4idea.merge.GitPullDialog" timestamp="1604920419179">
       <screen x="65" y="24" width="1855" height="1056" />
     </state>
